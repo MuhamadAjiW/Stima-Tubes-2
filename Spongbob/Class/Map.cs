@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -10,39 +11,45 @@ namespace Spongbob.Class
     internal class Map
     {
         private Graph?[,] tiles;
-        private int width, height;
-        private Vector2 start;
-        private int treasureCount = 0;
+        public int Width, Height;
+        public Tuple<int, int> StartPos = new(0, 0);
+        public Graph Start { get => tiles[StartPos.Item2, StartPos.Item1]!; }
+        public int TreasuresCount = 0;
 
         public Map(int width, int height)
         {
             tiles = new Graph?[height, width];
-            this.width = width;
-            this.height = height;
+            this.Width = width;
+            this.Height = height;
         }
 
         public void SetTile(int i, int j, bool isTreasure, bool isStart)
         {
-            Graph tile = new Graph(isTreasure);
+            Graph tile = new(j, i, isTreasure);
+            if (isTreasure)
+                TreasuresCount++;
             tiles[i, j] = tile;
             if (isStart)
-                start = new Vector2(j, i);
-            if (isTreasure) treasureCount++;
+                StartPos = new Tuple<int, int>(j, i);
             if (CheckValid(i-1, j))
             {
                 tiles[i-1, j]!.SetNeighbor(Location.Bottom, tile);
+                tile.SetNeighbor(Location.Top, tiles[i - 1, j]!);
             }
             if (CheckValid(i+1, j))
             {
                 tiles[i + 1, j]!.SetNeighbor(Location.Top, tile);
+                tile.SetNeighbor(Location.Bottom, tiles[i + 1, j]!);
             }
             if (CheckValid(i, j-1))
             {
                 tiles[i, j - 1]!.SetNeighbor(Location.Right, tile);
+                tile.SetNeighbor(Location.Left, tiles[i, j - 1]!);
             }
             if (CheckValid(i, j+1))
             {
                 tiles[i, j + 1]!.SetNeighbor(Location.Left, tile);
+                tile.SetNeighbor(Location.Right, tiles[i, j + 1]!);
             }
 
         }
@@ -50,18 +57,44 @@ namespace Spongbob.Class
         public void ResetState()
         {
             foreach (Graph? tile in tiles)
-                if (tile != null)
-                    tile.State = TileState.NotFound;
+                tile?.ResetState();
         }
 
         private bool CheckValid(int i, int j)
         {  
-            try
+
+                return i >= 0 && i < Height && j >= 0 && j < Width && tiles[i, j] != null;
+        }
+
+        
+
+        public void Print()
+        {
+            for (int i = 0; i < Height; i++)
             {
-                return tiles[i, j] != null;
-            } catch
-            {
-                return false;
+                for(int j = 0;  j < Width; j++)
+                {
+                    Graph? tile = tiles[i, j];
+                    if (i == StartPos.Item2 && j == StartPos.Item2)
+                    {
+                        Debug.Write("S");
+                    }
+                    else if (tile == null)
+                    {
+
+                        Debug.Write("X");
+                    }
+                    else if (tile.IsTreasure)
+                    {
+                        Debug.Write("T");
+                    } else
+                    {
+                        Debug.Write("R");
+                    }
+                    Debug.Write(" ");
+
+                }
+                Debug.Write("\n");
             }
         }
 
