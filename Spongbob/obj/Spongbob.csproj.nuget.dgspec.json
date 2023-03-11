@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Muhamad\\Desktop\\Vs\\Spongbob\\Spongbob\\Spongbob.csproj": {}
+    "C:\\Users\\Muhamad\\Desktop\\Stima\\Tubes2_Spongbob\\Tubes2_Spongbob\\Spongbob\\Spongbob.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Muhamad\\Desktop\\Vs\\Spongbob\\Spongbob\\Spongbob.csproj": {
+    "C:\\Users\\Muhamad\\Desktop\\Stima\\Tubes2_Spongbob\\Tubes2_Spongbob\\Spongbob\\Spongbob.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Muhamad\\Desktop\\Vs\\Spongbob\\Spongbob\\Spongbob.csproj",
+        "projectUniqueName": "C:\\Users\\Muhamad\\Desktop\\Stima\\Tubes2_Spongbob\\Tubes2_Spongbob\\Spongbob\\Spongbob.csproj",
         "projectName": "Spongbob",
-        "projectPath": "C:\\Users\\Muhamad\\Desktop\\Vs\\Spongbob\\Spongbob\\Spongbob.csproj",
+        "projectPath": "C:\\Users\\Muhamad\\Desktop\\Stima\\Tubes2_Spongbob\\Tubes2_Spongbob\\Spongbob\\Spongbob.csproj",
         "packagesPath": "C:\\Users\\Muhamad\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Muhamad\\Desktop\\Vs\\Spongbob\\Spongbob\\obj\\",
+        "outputPath": "C:\\Users\\Muhamad\\Desktop\\Stima\\Tubes2_Spongbob\\Tubes2_Spongbob\\Spongbob\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Muhamad\\AppData\\Roaming\\NuGet\\NuGet.Config",
