@@ -37,10 +37,47 @@ namespace Spongbob.Class
             return count;
         }
 
-        //public Result GetResult()
-        //{
+        public void GetResult(Result res, string id, string backId, Graph lastTreasure)
+        {
+            res.Tiles[map.StartPos.Item2, map.StartPos.Item1]++;
+            Graph tile = map.Start;
+            bool isBack = false;
 
-        //}
+            while (isTSP ? !isBack || tile != map.Start : tile != lastTreasure)
+            {
+                foreach (Location loc in Enum.GetValues(typeof(Location)))
+                {
+                    Graph? neighbor = tile.GetNeighbor(loc);
+                    if (isBack ? neighbor?.GetBackState(backId)?.State == TileState.Visited : neighbor?.GetState(id)?.State == TileState.Visited)
+                    {
+                        switch (loc)
+                        {
+                            case Location.Left:
+                                res.Route.Add('L');
+                                break;
+                            case Location.Right:
+                                res.Route.Add('R');
+                                break;
+                            case Location.Top:
+                                res.Route.Add('U');
+                                break;
+                            case Location.Bottom:
+                                res.Route.Add('D');
+                                break;
+                        }
+                        if (isBack)
+                            tile.ResetBackState();
+                        else
+                            tile.ResetState();
+                        tile = neighbor;
+                        res.Tiles[neighbor.Pos.Item2, neighbor.Pos.Item1]++;
+                        if (!isBack)
+                            isBack = neighbor == lastTreasure;
+                        break;
+                    }
+                }
+            }
+        }
 
         public abstract string Next();
 

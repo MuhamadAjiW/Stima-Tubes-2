@@ -34,53 +34,14 @@ namespace Spongbob.Class
                 res.NodesCount++;
             }
             watch.Stop();
-            res.Tiles[map.StartPos.Item2, map.StartPos.Item1]++;
-
             res.Time = watch.ElapsedMilliseconds;
-            Graph tile = map.Start;
-            bool isBack = false;
-            Debug.WriteLine(backId);
-
-            while (isTSP ? !isBack || tile != map.Start : tile != lastTreasure)
-            {
-                foreach(Location loc in Enum.GetValues(typeof(Location)))
-                {
-                    Graph? neighbor = tile.GetNeighbor(loc);
-                    if (isBack ? neighbor?.GetBackState(backId)?.State == TileState.Visited : neighbor?.GetState(id)?.State == TileState.Visited)
-                    {
-                        switch(loc)
-                        {
-                            case Location.Left:
-                                res.Route.Add('L');
-                                break;
-                            case Location.Right:
-                                res.Route.Add('R');
-                                break;
-                            case Location.Top:
-                                res.Route.Add('U');
-                                break;
-                            case Location.Bottom:
-                                res.Route.Add('D');
-                                break;
-                        }
-                        if (isBack)
-                            tile.ResetBackState();
-                        else
-                            tile.ResetState();
-                        tile = neighbor;
-                        res.Tiles[neighbor.Pos.Item2, neighbor.Pos.Item1]++;
-                        if (!isBack)
-                            isBack = neighbor == lastTreasure;
-                        break;
-                    }
-                }
-            }
+            GetResult(res, id, backId, lastTreasure!);
            
             return res;
         }
 
         public override string Next()
-        0.{
+        {
             if (!started)
             {
                 started = true;
@@ -120,40 +81,41 @@ namespace Spongbob.Class
                 isTSPDone = true;
                 return id;
             }
-            bool stuck = false;
             List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
                 if (t == null) return false;
                 if (IsBack && t.GetBackState(id)?.State == TileState.Visited) return false;
                 if (IsBack && t == map.Start) return true;
                 return t.GetState(id)?.State != TileState.Visited;
             }).ToList();
-            if (neighbors.Count == 0 && IsBack)
-            {
-                stuck = true;
-                neighbors = tile.Neighbors.ToList().Where(t => t != null && t.GetBackState(id)?.State != TileState.Visited).ToList();
-            }
-            Queue<Tuple<string, Graph>> q = stuck ? stucks : graphs;
             int neighborsCount = neighbors.Count;
-            //if (IsBack)
-            //{
-            //    Debug.Write("id: ");
-            //    Debug.Write(id);
-            //    Debug.WriteLine($" {neighborsCount} neighbors");
-            //}
+            int startI = 0;
+            if (IsBack)
+            {
+                List<Graph?> neighborsStuck = tile.Neighbors.ToList().Where(t =>
+                t != null && t.GetBackState(id)?.State != TileState.Visited &&
+                t.GetState(id)?.State == TileState.Visited).ToList();
+                neighborsCount += neighborsStuck.Count;
+                AddToQueue(stucks, neighborsStuck, id, neighborsCount, startI);
+                startI += neighborsStuck.Count;
+            }
+            AddToQueue(graphs, neighbors, id, neighborsCount, startI);
+            return id;
+        }
 
-            if (neighborsCount == 1)
+        static void AddToQueue(Queue<Tuple<string, Graph>> q, List<Graph?> neighbors, string id, int count, int startI)
+        {
+            if (neighbors.Count == 0) return;
+
+            if (count == 1)
             {
                 q.Enqueue(new Tuple<string, Graph>(id, neighbors[0]!));
-                return id;
+                return;
             }
-            int i = 0;
             foreach (var n in neighbors)
             {
-                q.Enqueue(new Tuple<string, Graph>(id + i, n!));
-                ++i;
+                q.Enqueue(new Tuple<string, Graph>(id + startI, n!));
+                ++startI;
             }
-
-            return id;
         }
 
         public override void RunAndVisualize()
