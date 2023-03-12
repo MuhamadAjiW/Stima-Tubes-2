@@ -60,41 +60,77 @@ namespace Spongbob.Class
             neighbors[(int)loc] = neighbor;
         }
         
-        public BranchState GetState(string branchID)
+        public BranchState? GetState(string branchID, bool exact = false)
         {
             foreach (var state in states)
             {
-                Debug.WriteLine("AAAA");
-                Debug.WriteLine(state.ID);
-                Debug.WriteLine(state.State);
-                Debug.WriteLine("BBB");
-                if (state.IsIn(branchID))
+                if (exact)
+                {
+                    if (state.ID == branchID)
+                        return state;
+                }
+                else if (state.IsIn(branchID))
                 {
                     return state;
                 }
             }
-            BranchState branchState = new(branchID);
-            states.Add(branchState);
-            return branchState;
+            return null;
         }
 
-        public BranchState GetBackState(string branchID)
+        public void SetState(string branchID, TileState state)
+        {
+            BranchState? bState = GetState(branchID, true);
+            if (bState != null)
+            {
+                bState.State = state;
+            } else
+            {
+                bState = new BranchState(branchID);
+                bState.State = state;
+                states.Add(bState);
+            }
+        }
+
+        public BranchState? GetBackState(string branchID, bool exact = false)
         {
             foreach (var state in backStates)
             {
-                if (state.IsIn(branchID))
+                if (exact)
+                {
+                    if (state.ID == branchID)
+                        return state;
+                }
+                else if (state.IsIn(branchID))
                 {
                     return state;
                 }
             }
-            BranchState branchState = new(branchID);
-            backStates.Add(branchState);
-            return branchState;
+            return null;
+        }
+
+        public void SetBackState(string branchID, TileState state)
+        {
+            BranchState? bState = GetBackState(branchID, true);
+            if (bState != null)
+            {
+                bState.State = state;
+            }
+            else
+            {
+                bState = new BranchState(branchID);
+                bState.State = state;
+                backStates.Add(bState);
+            }
         }
 
         public void ResetState()
         {
             states.Clear();
+        }
+
+        public void ResetBackState()
+        {
+            backStates.Clear();
         }
 
     }

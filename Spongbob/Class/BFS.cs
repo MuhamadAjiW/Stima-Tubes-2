@@ -10,6 +10,7 @@ namespace Spongbob.Class
     internal class BFS : Algorithm
     {
         Queue<Tuple<string, Graph>> graphs = new();
+        Queue<Tuple<string, Graph>> stucks = new();
         public BFS(Map map, bool isTSP) : base(map, isTSP)
         {
         }
@@ -18,124 +19,137 @@ namespace Spongbob.Class
         {
             Result res = new(map.Width, map.Height);
             string id = "0";
+            string backId = "";
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             while (!IsDone)
             {
                 if (!isTreasureDone && graphs.TryPeek(out var graph))
                     lastTreasure = graph.Item2;
-                id = Next();
+                if (IsBack)
+                {
+                    backId = Next();
+                }
+                else id = Next();
                 res.NodesCount++;
-                // Debug.WriteLine(res.NodesCount);
             }
             watch.Stop();
-            Tuple<int, int> currentPos = map.StartPos;
-            res.Tiles[currentPos.Item2, currentPos.Item2]++;
+            res.Tiles[map.StartPos.Item2, map.StartPos.Item1]++;
 
             res.Time = watch.ElapsedMilliseconds;
             Graph tile = map.Start;
             bool isBack = false;
-            int treasureCount = 0;
-            Debug.WriteLine(id);
+            Debug.WriteLine(backId);
 
-            while (isTSP ? !isBack || tile != map.Start : treasureCount < map.TreasuresCount)
+            while (isTSP ? !isBack || tile != map.Start : tile != lastTreasure)
             {
-                bool visit = false;
                 foreach(Location loc in Enum.GetValues(typeof(Location)))
                 {
                     Graph? neighbor = tile.GetNeighbor(loc);
-                    Debug.WriteLineIf(neighbor != null, neighbor?.Pos.ToString());
-                    Debug.WriteLineIf(neighbor != null, neighbor?.GetState(id).State);
-                    if (isBack ? neighbor?.GetBackState(id).State == TileState.Visited : neighbor?.GetState(id).State == TileState.Visited)
+                    if (isBack ? neighbor?.GetBackState(backId)?.State == TileState.Visited : neighbor?.GetState(id)?.State == TileState.Visited)
                     {
-                        visit = true;
                         switch(loc)
                         {
                             case Location.Left:
-                                currentPos = new Tuple<int, int>(currentPos.Item1 - 1, currentPos.Item2); 
                                 res.Route.Add('L');
                                 break;
                             case Location.Right:
-                                currentPos = new Tuple<int, int>(currentPos.Item1 + 1, currentPos.Item2);
                                 res.Route.Add('R');
                                 break;
                             case Location.Top:
-                                currentPos = new Tuple<int, int>(currentPos.Item1, currentPos.Item2 - 1);
                                 res.Route.Add('U');
                                 break;
                             case Location.Bottom:
-                                currentPos = new Tuple<int, int>(currentPos.Item1, currentPos.Item2 + 1);
                                 res.Route.Add('D');
                                 break;
                         }
-                        tile.ResetState();
+                        if (isBack)
+                            tile.ResetBackState();
+                        else
+                            tile.ResetState();
                         tile = neighbor;
-                        res.Tiles[currentPos.Item2, currentPos.Item2]++;
-                        if (neighbor.IsTreasure) treasureCount++;
+                        res.Tiles[neighbor.Pos.Item2, neighbor.Pos.Item1]++;
                         if (!isBack)
                             isBack = neighbor == lastTreasure;
                         break;
                     }
                 }
-                if (!visit) break;
             }
            
             return res;
         }
 
         public override string Next()
-        {
+        0.{
             if (!started)
             {
                 started = true;
                 graphs.Enqueue(new Tuple<string, Graph>("0", map.Start));
             }
-            var el = graphs.Dequeue();
+            graphs.TryDequeue(out var el);
+            if (el == null)
+            {
+                stucks.TryDequeue(out el);
+            }
+            if (el == null)
+            {
+                throw new Exception("No solution");
+            }
             Graph tile = el.Item2;
             string id = el.Item1;
-            Debug.WriteLine(id);
             if (IsBack)
-                tile.GetBackState(id).State = TileState.Visited;
-            else tile.GetState(id).State = TileState.Visited;
+                tile.SetBackState(id, TileState.Visited);
+            else tile.SetState(id, TileState.Visited);
 
-            if (tile.IsTreasure)
+            if (!IsBack && tile.IsTreasure)
             {
                 treasureCounts.TryAdd(id, 0);
                 treasureCounts[id]++;
                 if (GetTreasureCount(id) == map.TreasuresCount)
                 {
-                    Debug.WriteLine("Done");
                     isTreasureDone = true;
                     if (isTSP)
                     {
                         graphs.Clear();
-                        graphs.Enqueue(new Tuple<string, Graph>("0", tile));
+                        graphs.Enqueue(new Tuple<string, Graph>(id, tile));
                     }
                     return id;
                 }
+            } else if (IsBack && tile == map.Start)
+            {
+                isTSPDone = true;
+                return id;
             }
+            bool stuck = false;
             List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
                 if (t == null) return false;
-                if (IsBack && t.GetBackState(id).State == TileState.Visited) return false;
-                return t.GetState(id).State != TileState.Visited;
-
+                if (IsBack && t.GetBackState(id)?.State == TileState.Visited) return false;
+                if (IsBack && t == map.Start) return true;
+                return t.GetState(id)?.State != TileState.Visited;
             }).ToList();
             if (neighbors.Count == 0 && IsBack)
             {
-                neighbors = tile.Neighbors.ToList().Where(t => t != null && t.GetBackState(id).State != TileState.Visited).ToList();
+                stuck = true;
+                neighbors = tile.Neighbors.ToList().Where(t => t != null && t.GetBackState(id)?.State != TileState.Visited).ToList();
             }
+            Queue<Tuple<string, Graph>> q = stuck ? stucks : graphs;
             int neighborsCount = neighbors.Count;
+            //if (IsBack)
+            //{
+            //    Debug.Write("id: ");
+            //    Debug.Write(id);
+            //    Debug.WriteLine($" {neighborsCount} neighbors");
+            //}
 
             if (neighborsCount == 1)
             {
-                graphs.Enqueue(new Tuple<string, Graph>(id, neighbors[0]!));
+                q.Enqueue(new Tuple<string, Graph>(id, neighbors[0]!));
                 return id;
             }
-
             int i = 0;
             foreach (var n in neighbors)
             {
-                graphs.Enqueue(new Tuple<string, Graph>(id + i, n!));
+                q.Enqueue(new Tuple<string, Graph>(id + i, n!));
                 ++i;
             }
 

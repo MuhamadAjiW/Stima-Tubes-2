@@ -34,9 +34,13 @@ namespace Spongbob.Class
                 if (treasureCounts.TryGetValue(id.Substring(0, i), out int n))
                     count += n;
             }
-            Debug.WriteLine(count);
             return count;
         }
+
+        //public Result GetResult()
+        //{
+
+        //}
 
         public abstract string Next();
 
