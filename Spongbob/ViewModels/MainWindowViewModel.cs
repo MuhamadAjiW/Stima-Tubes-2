@@ -2,6 +2,13 @@
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public string Greeting => "Welcome to Avalonia!";
+        public SidebarViewModel SideBar { get; }
+        public ResultViewModel Result { get; }
+
+        public MainWindowViewModel()
+        {
+            SideBar = new();
+            Result = new();
+        }
     }
 }

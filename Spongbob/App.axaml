@@ -7,7 +7,18 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
-    <Application.Styles>
-        <FluentTheme Mode="Light"/>
-    </Application.Styles>
+	<Application.Resources>
+		<SolidColorBrush x:Key="Primary">#432C7A</SolidColorBrush>
+		<SolidColorBrush x:Key="Secondary">#80489C</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryPink">#FF8FB1</SolidColorBrush>
+		<SolidColorBrush x:Key="SecondaryPink">#FCE2DB</SolidColorBrush>
+		<FontFamily x:Key="Montserrat">
+			avares://Spongbob/Assets/Montserrat/Montserrat-Regular.ttf
+		</FontFamily>
+	</Application.Resources>
+
+	<Application.Styles>
+		<FluentTheme Mode="Dark"/>
+		<StyleInclude Source="avares://Spongbob/Styles.axaml"/>
+	</Application.Styles>
 </Application>
