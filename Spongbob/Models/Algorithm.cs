@@ -12,7 +12,7 @@ namespace Spongbob.Class
         protected Map map;
         protected bool started = false;
         protected bool isTSP;
-        protected readonly Dictionary<string, int> treasureCounts = new();
+        protected int treasureCounts = 0;
         protected Graph? lastTreasure;
         protected bool isTreasureDone = false;
         protected bool isTSPDone = false;
@@ -26,6 +26,7 @@ namespace Spongbob.Class
             this.isTSP = isTSP;
         }
 
+        /*
         public int GetTreasureCount(string id)
         {
             int count = 0;
@@ -36,50 +37,28 @@ namespace Spongbob.Class
             }
             return count;
         }
+        */
 
-        public void GetResult(Result res, string id, string backId, Graph lastTreasure)
+        public void GetResult(Result res, string final)
         {
-            res.Tiles[map.StartPos.Item2, map.StartPos.Item1]++;
-            Graph tile = map.Start;
-            bool isBack = false;
-
-            while (isTSP ? !isBack || tile != map.Start : tile != lastTreasure)
-            {
-                foreach (Location loc in Enum.GetValues(typeof(Location)))
-                {
-                    Graph? neighbor = tile.GetNeighbor(loc);
-                    if (isBack ? neighbor?.GetBackState(backId)?.State == TileState.Visited : neighbor?.GetState(id)?.State == TileState.Visited)
-                    {
-                        switch (loc)
-                        {
-                            case Location.Left:
-                                res.Route.Add('L');
-                                break;
-                            case Location.Right:
-                                res.Route.Add('R');
-                                break;
-                            case Location.Top:
-                                res.Route.Add('U');
-                                break;
-                            case Location.Bottom:
-                                res.Route.Add('D');
-                                break;
-                        }
-                        if (isBack)
-                            tile.ResetBackState();
-                        else
-                            tile.ResetState();
-                        tile = neighbor;
-                        res.Tiles[neighbor.Pos.Item2, neighbor.Pos.Item1]++;
-                        if (!isBack)
-                            isBack = neighbor == lastTreasure;
-                        break;
-                    }
+            int limit = final.Length;
+            for(int i = 1; i < limit; i++){
+                if(final[i] == '0'){
+                    res.Route.Add('U');
+                }
+                else if(final[i] == '1'){
+                    res.Route.Add('R');
+                }
+                else if(final[i] == '2'){
+                    res.Route.Add('D');
+                }
+                else if(final[i] == '3'){
+                    res.Route.Add('L');
                 }
             }
         }
 
-        public abstract string Next();
+        public abstract string Next(string previous);
 
         public abstract Result JustRun();
 

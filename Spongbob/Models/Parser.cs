@@ -37,6 +37,8 @@ namespace Spongbob.Class
                     switch (tile)
                     {
                         case "K":
+                            Console.WriteLine(y);
+                            Console.WriteLine(x);
                             map.SetTile(y, x, false, true);
                             break;
                         case "R":

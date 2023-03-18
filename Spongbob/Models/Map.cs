@@ -75,7 +75,7 @@ namespace Spongbob.Class
                 for(int j = 0;  j < Width; j++)
                 {
                     Graph? tile = tiles[i, j];
-                    if (i == StartPos.Item2 && j == StartPos.Item2)
+                    if (i == StartPos.Item2 && j == StartPos.Item1)
                     {
                         Debug.Write("S");
                     }
