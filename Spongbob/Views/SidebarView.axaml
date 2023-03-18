@@ -3,32 +3,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="720"
-             x:Class="Spongbob.Views.SidebarView">
+             x:Class="Spongbob.Views.SidebarView"
+			 xmlns:local="clr-namespace:Spongbob.Views">
 	<UserControl.Styles>
 		<Style Selector="Button">
 			<Setter Property="FontSize" Value="18"/>
 		</Style>
 	</UserControl.Styles>
 	<Border CornerRadius="28" ClipToBounds="True" Background="{StaticResource Secondary}">
-		<StackPanel Margin="10 20 10 0" Spacing="6">
-			<TextBlock Text="Input Map" 
-					   FontSize="24"
-					   FontWeight="SemiBold" HorizontalAlignment="Center"
-					   Foreground="{StaticResource PrimaryPink}"/>
-			<Button Command="{Binding SelectFile}" 
-					Content="{Binding Filename}" Padding="10" 
-					Background="White" 
-					HorizontalAlignment="Center" 
-					Width="250"
-					HorizontalContentAlignment="Center"
-					CornerRadius="71"
-					Foreground="Black"/>
-			<Button Command="{Binding Search}"
-					Content="Search" Padding="10 3"
-					Background="{StaticResource PrimaryPink}"
-					HorizontalAlignment="Center"
-					HorizontalContentAlignment="Center"
-					CornerRadius="71"/>
-		</StackPanel>
+		<Grid Margin="10 20 10 0" RowDefinitions="Auto,*">
+			<StackPanel Spacing="6" Grid.Row="0">
+				<TextBlock Text="Input Map"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<Button Command="{Binding SelectFile}"
+						Content="{Binding Filename}" Padding="10"
+						Background="White"
+						HorizontalAlignment="Center"
+						Width="250"
+						HorizontalContentAlignment="Center"
+						CornerRadius="71"
+						Foreground="Black"/>
+				<ContentControl Content="{Binding TSP}"/>
+				<ContentControl Content="{Binding Algorithm}"/>
+				<Button Command="{Binding Visualize}"
+						Content="Visualize" Padding="0 3"
+						Width="180"
+						Background="{StaticResource PrimaryPink}"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						CornerRadius="71"/>
+				<Button Command="{Binding Search}"
+						Content="Search" Padding="0 3"
+						Width="180"
+						Background="{StaticResource PrimaryPink}"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						CornerRadius="71"/>
+			</StackPanel>
+			<Image Source="avares://Spongbob/Assets/sponsgar.png" 
+				   Grid.Row="1"
+				   VerticalAlignment="Bottom"/>
+		</Grid>
 	</Border>
 </UserControl>

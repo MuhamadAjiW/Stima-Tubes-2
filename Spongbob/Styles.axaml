@@ -10,4 +10,7 @@
 	<Style Selector="TextBlock">
 		<Setter Property="FontFamily" Value="{DynamicResource Montserrat}"/>
 	</Style>
+	<Style Selector="Button">
+		<Setter Property="Cursor" Value="Hand"/>
+	</Style>
 </Styles>

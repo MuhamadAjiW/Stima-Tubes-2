@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Metadata;
 using Avalonia.Threading;
 using ReactiveUI;
 using System;
@@ -19,11 +20,18 @@ namespace Spongbob.ViewModels
         public string? FilePath { get => filePath; }
         public SidebarViewModel() {
             ShowFileDialog = new();
+            TSP = new("TSP", "yes", "no");
+            Algorithm = new("Algorithm", "BFS", "DFS");
         }
 
+        public ToggleButtonViewModel TSP { get; }
+        public ToggleButtonViewModel Algorithm { get; }
+
         public string? Filename { 
-            get => string.IsNullOrEmpty(filePath) ? "Click to select" : Path.GetFileName(filePath); 
-            set => this.RaiseAndSetIfChanged(ref filePath, value);
+            get => string.IsNullOrEmpty(filePath) ? "Click to select" : Path.GetFileName(filePath);
+            set { 
+                this.RaiseAndSetIfChanged(ref filePath, value);
+            }
         }
 
 
@@ -35,12 +43,19 @@ namespace Spongbob.ViewModels
             if (result != null)
             {
                 Filename = result;
+                this.RaisePropertyChanged(nameof(filePath));
             }
         }
 
         public void Search()
         {
 
+        }
+
+        [DependsOn(nameof(filePath))]
+        public bool CanSearch(object parameter)
+        {
+            return filePath != null;
         }
     }
 }

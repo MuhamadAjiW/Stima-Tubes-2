@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spongbob.Views.ToggleButtonView">
+	<UserControl.Styles>
+		<Style Selector="Button">
+			<Setter Property="Background" Value="White"/>
+			<Setter Property="Foreground" Value="#786F6F"/>
+		</Style>
+		<Style Selector="Button.active">
+			<Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
+			<Setter Property="Foreground" Value="White"/>
+		</Style>
+	</UserControl.Styles>
+	<StackPanel>
+		<TextBlock Text="{Binding Title}"
+						FontSize="24"
+						FontWeight="SemiBold" HorizontalAlignment="Center"
+						Foreground="{StaticResource PrimaryPink}"/>
+		<Grid ColumnDefinitions="1*,1*" RowDefinitions="Auto" Margin="10 8">
+			<Button Content="{Binding Button1Title}"
+					Command="{Binding Select}"
+					CommandParameter="1"
+					Classes.active="{Binding Button1Active}"
+					Grid.Column="0"
+					HorizontalAlignment="Stretch"
+					CornerRadius="70 0 0 70"
+					HorizontalContentAlignment="Center"
+				>
+			</Button>
+			<Button Content="{Binding Button2Title}"
+					Command="{Binding Select}"
+					CommandParameter="2"
+					Classes.active="{Binding Button2Active}"
+					Grid.Column="1"
+					HorizontalAlignment="Stretch"
+					CornerRadius="0 70 70 0"
+					HorizontalContentAlignment="Center"
+				>
+			</Button>
+		</Grid>
+	</StackPanel>
+</UserControl>
