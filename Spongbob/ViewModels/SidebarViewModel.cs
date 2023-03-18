@@ -16,8 +16,26 @@ namespace Spongbob.ViewModels
 {
     public class SidebarViewModel: ViewModelBase
     {
+
+        private string? error;
+
+        public string? Error
+        {
+            get => error;
+            set => this.RaiseAndSetIfChanged(ref error, value);
+        }
+
+
         private string? filePath;
-        public string? FilePath { get => filePath; }
+        public string? FilePath { 
+            get => filePath;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref filePath, value);
+                this.RaisePropertyChanged(nameof(FilePath));
+                this.RaisePropertyChanged(nameof(Filename));
+            }
+        }
         public SidebarViewModel() {
             ShowFileDialog = new();
             TSP = new("TSP", "yes", "no");
@@ -29,9 +47,6 @@ namespace Spongbob.ViewModels
 
         public string? Filename { 
             get => string.IsNullOrEmpty(filePath) ? "Click to select" : Path.GetFileName(filePath);
-            set { 
-                this.RaiseAndSetIfChanged(ref filePath, value);
-            }
         }
 
 
@@ -40,10 +55,13 @@ namespace Spongbob.ViewModels
         public async void SelectFile()
         {
             var result = await ShowFileDialog.Handle(new Unit());
+            if  (result != FilePath)
+            {
+                Error = null;
+            }
             if (result != null)
             {
-                Filename = result;
-                this.RaisePropertyChanged(nameof(filePath));
+                FilePath = result;
             }
         }
 
@@ -52,10 +70,10 @@ namespace Spongbob.ViewModels
 
         }
 
-        [DependsOn(nameof(filePath))]
+        [DependsOn(nameof(FilePath))]
         public bool CanSearch(object parameter)
         {
-            return filePath != null;
+            return FilePath != null;
         }
     }
 }

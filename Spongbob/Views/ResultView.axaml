@@ -7,7 +7,19 @@
 	<Border CornerRadius="28" ClipToBounds="True"
 			Background="{StaticResource Secondary}"
 			Margin="20 0 0 0">
-		<StackPanel>
-		</StackPanel>
+		<Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto,*">
+			<TextBlock 
+				Grid.Row="0"
+				Text="OUTPUT"
+						   FontSize="24"
+						   FontWeight="Bold" HorizontalAlignment="Left"
+						   Foreground="{StaticResource PrimaryPink}"
+					   Margin="0 0 0 10"/>
+			<Grid
+				Grid.Row="1"
+	   IsVisible="{Binding Map, Converter={x:Static ObjectConverters.IsNotNull}}"
+	   Name="container">
+			</Grid>
+		</Grid>
 	</Border>
 </UserControl>

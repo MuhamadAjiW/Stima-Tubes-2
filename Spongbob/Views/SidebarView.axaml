@@ -25,6 +25,11 @@
 						HorizontalContentAlignment="Center"
 						CornerRadius="71"
 						Foreground="Black"/>
+				<TextBlock Text="{Binding Error}"
+						   IsVisible="{Binding !!Error}"
+						   FontSize="12"
+						   FontWeight="Medium" HorizontalAlignment="Center"
+						   Foreground="Red"/>
 				<ContentControl Content="{Binding TSP}"/>
 				<ContentControl Content="{Binding Algorithm}"/>
 				<Button Command="{Binding Visualize}"

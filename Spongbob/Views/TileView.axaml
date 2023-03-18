@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Spongbob.Views.TileView"
+			 xmlns:local="clr-namespace:Spongbob.ViewModels;assembly=Spongbob">
+	<UserControl.Resources>
+		<local:EnumConverter x:Key="enumConverter"/>
+	</UserControl.Resources>
+	<UserControl.Styles>
+		<Style Selector="Panel">
+			<Setter Property="Background" Value="White"/>
+		</Style>
+		<Style Selector="Panel.void">
+			<Setter Property="Background" Value="Black"/>
+		</Style>
+		<Style Selector="Panel.treasure">
+			<Setter Property="Background" Value="Yellow"/>
+		</Style>
+		<Style Selector="Panel.start">
+			<Setter Property="Background" Value="LawnGreen"/>
+		</Style>
+	</UserControl.Styles>
+	<Panel
+		   Classes.void="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.VOID}}"
+		Classes.treasure="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"
+		Classes.start="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.START}}"
+		   >
+		<Image IsVisible="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
+			   Source="avares://Spongbob/Assets/patrick.png"/>
+	</Panel>
+</UserControl>
