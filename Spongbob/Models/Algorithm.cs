@@ -62,7 +62,7 @@ namespace Spongbob.Class
 
         public abstract Result JustRun();
 
-        public abstract void RunAndVisualize();
+        public abstract Tuple<String, Graph> RunAndVisualize(string previous, Graph previousTile);
 
 
     }
