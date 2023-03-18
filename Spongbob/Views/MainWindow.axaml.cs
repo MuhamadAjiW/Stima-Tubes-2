@@ -19,6 +19,7 @@ namespace Spongbob.Views
         {
             OpenFileDialog dialog = new OpenFileDialog()
             {
+                AllowMultiple = false
             };
 
             dialog.Filters.Add(new FileDialogFilter() { Name = "Text Files", Extensions = { "txt" } });
