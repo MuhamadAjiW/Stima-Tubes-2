@@ -9,6 +9,7 @@
         Icon="/Assets/avalonia-logo.ico"
 		Width="1280" Height="720"
 		CanResize="False"
+		WindowStartupLocation="CenterScreen"
         Title="Spongbob">
 	<Window.Background>
 		<ImageBrush Source="/Assets/bg.png" Stretch="UniformToFill"/>

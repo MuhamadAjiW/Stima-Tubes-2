@@ -19,8 +19,9 @@ namespace Spongbob.Views
         {
             OpenFileDialog dialog = new()
             {
-                AllowMultiple = false
+                AllowMultiple = false,
             };
+
 
             var result =  await dialog.ShowAsync(this);
 
