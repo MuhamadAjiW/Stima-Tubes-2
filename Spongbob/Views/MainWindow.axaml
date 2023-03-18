@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Spongbob.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/favicon-32x32.png"
 		Width="1280" Height="720"
 		CanResize="False"
 		WindowStartupLocation="CenterScreen"
