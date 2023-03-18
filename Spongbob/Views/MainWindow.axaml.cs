@@ -17,23 +17,23 @@ namespace Spongbob.Views
 
         private async Task DoShowFileDialogAsync(InteractionContext<Unit, string?> interaction)
         {
-            OpenFileDialog dialog = new()
+            OpenFileDialog dialog = new OpenFileDialog()
             {
-                AllowMultiple = false,
             };
 
+            dialog.Filters.Add(new FileDialogFilter() { Name = "Text Files", Extensions = { "txt" } });
 
-            var result =  await dialog.ShowAsync(this);
+            var result = await dialog.ShowAsync(this);
 
             if (result != null && result.Length > 0)
             {
                 interaction.SetOutput(result[0]);
-            } else
+            }
+            else
             {
                 interaction.SetOutput(null);
             }
-
-
         }
+
     }
 }
