@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Spongbob.Models
@@ -236,6 +237,11 @@ namespace Spongbob.Models
         }
 
         public override Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task RunProper(Callback callback, int delay, CancellationTokenSource cancellation)
         {
             throw new NotImplementedException();
         }

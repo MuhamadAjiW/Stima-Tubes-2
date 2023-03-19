@@ -6,6 +6,7 @@ using Spongbob.Models;
 using Spongbob.Views;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Spongbob.ViewModels
 {
@@ -100,6 +101,11 @@ namespace Spongbob.ViewModels
 
         }
 
+        public TileViewModel GetTile(int i, int j)
+        {
+            return Tiles[i * Map!.Width + j];
+        }
+
         public Result RunSearch(bool bfs, bool tsp)
         {
             Algorithm algorithm;
@@ -113,6 +119,37 @@ namespace Spongbob.ViewModels
             }
 
             return algorithm.JustRun();
+        }
+
+        public void RunVisualize(bool bfs, bool tsp, CancellationTokenSource cancellation)
+        {
+            Algorithm algorithm;
+
+            if (bfs)
+            {
+                algorithm = new BFS(Map!, tsp);
+            }
+            else
+            {
+                algorithm = new DFS(Map!, tsp);
+            }
+
+            algorithm.RunProper((step) =>
+            {
+                Graph now = step.Item2;
+                Graph before = step.Item3;
+
+                GetTile(now.Pos.Item2, now.Pos.Item1).State = TileState.CURRENT;
+                switch (before.TileView)
+                {
+                    case Models.TileView.Visited:
+                        GetTile(before.Pos.Item2, before.Pos.Item1).State = TileState.VISITED;
+                        break;
+                    case Models.TileView.BackTracked:
+                        GetTile(before.Pos.Item2, before.Pos.Item1).State = TileState.BACKTRACKED;
+                        break;
+                }
+            }, 1000, cancellation);
         }
     }
 }

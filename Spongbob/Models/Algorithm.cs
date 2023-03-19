@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Spongbob.Models
@@ -16,6 +17,8 @@ namespace Spongbob.Models
         protected Graph? lastTreasure;
         protected bool isTreasureDone = false;
         protected bool isTSPDone = false;
+
+        public delegate void Callback(Tuple<string, Graph, Graph> step);
 
         public bool IsDone { get => isTSP ? isTSPDone : isTreasureDone; }
         public bool IsBack { get => isTSP && !isTSPDone && isTreasureDone; }
@@ -71,6 +74,8 @@ namespace Spongbob.Models
         public abstract Result JustRun();
 
         public abstract Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile);
+
+        public abstract Task RunProper(Callback callback, int delay, CancellationTokenSource cancellation);
 
 
     }

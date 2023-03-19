@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Spongbob.Models
@@ -266,16 +267,16 @@ namespace Spongbob.Models
 
             
             if(!id.StartsWith(previous) && id != previous){
-                previousTile.SetTileView(TileView.BackTracked);
+                previousTile.TileView = TileView.BackTracked;
                 tile = getGraphStep(previous[previous.Length - 1], previousTile, true);
-                tile.SetTileView(TileView.BackTracked);
+                tile.TileView = TileView.BackTracked;
 
                 return new Tuple<string, Graph, Graph>(previous.Substring(0, previous.Length - 1), tile, previousTile);
             }
             if(id.Length > previous.Length + 1){
-                previousTile.SetTileView(TileView.BackTracked);
+                previousTile.TileView = TileView.Visited;
                 tile = getGraphStep(id[previous.Length], previousTile, false);
-                tile.SetTileView(TileView.BackTracked);
+                tile.TileView = TileView.BackTracked;
                 return new Tuple<string, Graph, Graph>(id.Substring(0, previous.Length + 1), tile, previousTile);
             }
             
@@ -293,7 +294,8 @@ namespace Spongbob.Models
 
             tile = el!.Item2;
 
-            tile.SetTileView(TileView.Visited);
+            previousTile.TileView = TileView.Visited;
+            tile.TileView = TileView.Visited;
             if (IsBack)
             {
                 tile.SetBackState(id, TileState.Visited);
@@ -366,7 +368,8 @@ namespace Spongbob.Models
             return new Tuple<string, Graph, Graph>(id, tile, previousTile);
         }
 
-        public void RunProper(){
+        public override async Task RunProper(Callback callback, int delay, CancellationTokenSource cancellation)
+        {
             
             Result res = new(map.Width, map.Height);
             string id = "";
@@ -379,6 +382,10 @@ namespace Spongbob.Models
 
             while (!IsDone)
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return;
+                }
                 if(!IsBack)
                     Console.WriteLine("Current id: " + id);
                 else Console.WriteLine("Current id: " + backId);
@@ -409,7 +416,7 @@ namespace Spongbob.Models
                     lastTreasure = graph2.Item2;
 
 
-                Tuple<String, Graph, Graph> step;
+                Tuple<string, Graph, Graph> step;
                 if (IsBack)
                 {
                     step = RunAndVisualize(backId, position);
@@ -422,6 +429,8 @@ namespace Spongbob.Models
                     if(!isTreasureDone) backId = id;
                 } 
                 position = step.Item2;
+                callback(step);
+                await Task.Delay(delay);
             }
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;

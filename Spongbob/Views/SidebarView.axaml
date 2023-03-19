@@ -12,7 +12,7 @@
 	</UserControl.Styles>
 	<Border CornerRadius="28" ClipToBounds="True" Background="{StaticResource Secondary}">
 		<Grid Margin="10 20 10 0" RowDefinitions="Auto,*">
-			<StackPanel Spacing="6" Grid.Row="0" IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNull}}">
+			<StackPanel Spacing="6" Grid.Row="0" IsVisible="{Binding !IsRunning}">
 				<TextBlock Text="Input Map"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
@@ -47,7 +47,7 @@
 						HorizontalContentAlignment="Center"
 						CornerRadius="71"/>
 			</StackPanel>
-			<StackPanel Spacing="6" Grid.Row="0" IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNotNull}}">
+			<StackPanel Spacing="6" Grid.Row="0" IsVisible="{Binding IsRunning}">
 				<TextBlock Text="Route"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"

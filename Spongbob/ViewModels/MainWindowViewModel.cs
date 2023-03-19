@@ -4,6 +4,7 @@ using System;
 using ReactiveUI;
 using Spongbob.Models;
 using Avalonia.Controls;
+using System.Threading;
 
 namespace Spongbob.ViewModels
 {
@@ -15,6 +16,7 @@ namespace Spongbob.ViewModels
         public MainWindowViewModel()
         {
             SideBar = new();
+            CancellationTokenSource? cancellation= null;
             Result = new();
             Parser parser = new();
 
@@ -26,6 +28,7 @@ namespace Spongbob.ViewModels
                     );
 
                 SideBar.Result = res;
+                SideBar.IsRunning = true;
 
                 for (int i = 0; i < res.Tiles.GetLength(0); i++)
                 {
@@ -43,17 +46,31 @@ namespace Spongbob.ViewModels
                 }
             }, this.WhenAnyValue(x => x.SideBar.CanSearch));
 
+            SideBar.Visualize = ReactiveCommand.Create(() =>
+            {
+                cancellation = new CancellationTokenSource();
+                SideBar.IsRunning = true;
+                Result.RunVisualize(
+                    SideBar.Algorithm.Button1Active,
+                    SideBar.TSP.Button1Active, cancellation);
+            }, this.WhenAnyValue(x => x.SideBar.CanSearch));
+
             SideBar.RaisePropertyChanged(nameof(SideBar.Search));
 
             SideBar.Reset = ReactiveCommand.Create(() =>
             {
-                var res = SideBar.Result;
-                if (res == null) return;
-                for (int i = 0; i < res.Tiles.GetLength(0); i++)
+                if (cancellation != null)
                 {
-                    for (int j = 0; j < res.Tiles.GetLength(1); j++)
+                    cancellation.Cancel();
+                }
+                var res = SideBar.Result;
+                if (Result.Map == null) return;
+                SideBar.IsRunning = false;
+                for (int i = 0; i < Result.Map.Height; i++)
+                {
+                    for (int j = 0; j < Result.Map.Width; j++)
                     {
-                        var tile = Result.Tiles[i * res.Tiles.GetLength(1) + j];
+                        var tile = Result.GetTile(i, j);
                         tile.State = TileState.BLANK;
 
                         var start = Result.Map!.StartPos;

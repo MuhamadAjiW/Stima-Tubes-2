@@ -20,7 +20,7 @@ namespace Spongbob.Models
         public int Id;
         private bool isTreasure = false;
         public Tuple<int, int> Pos;
-        public TileView View = TileView.NotVisited;
+        public TileView TileView { get; set; } = TileView.NotVisited;
         private readonly List<BranchState> states = new();
         private readonly List<BranchState> backStates = new();
         private readonly Graph?[] neighbors =
@@ -49,13 +49,6 @@ namespace Spongbob.Models
             neighbors[2] = bottom;
             neighbors[3] = left;
             this.isTreasure = isTreasure;
-        }
-
-        public TileView GetTileView { 
-            get => View;
-        }
-        public void SetTileView(TileView newView) {
-            View = newView;
         }
 
         public Graph? GetNeighbor(Location loc)

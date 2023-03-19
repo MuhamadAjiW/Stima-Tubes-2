@@ -17,8 +17,15 @@ using System.Threading.Tasks;
 
 namespace Spongbob.ViewModels
 {
-    public class SidebarViewModel: ViewModelBase
+    public class SidebarViewModel : ViewModelBase
     {
+        private bool isRunning = false;
+
+        public bool IsRunning
+        {
+            get => isRunning;
+            set => this.RaiseAndSetIfChanged(ref isRunning, value);
+        }
 
         private Result? result;
 
@@ -64,6 +71,11 @@ namespace Spongbob.ViewModels
 
             }, this.WhenAnyValue(x => x.CanSearch));
 
+            Visualize = ReactiveCommand.Create(() =>
+            {
+
+            }, this.WhenAnyValue(x => x.CanSearch));
+
             this.WhenValueChanged(x => x.Result).Subscribe(r =>
             {
                if (r != null)
@@ -81,6 +93,8 @@ namespace Spongbob.ViewModels
             {
                 Result = null;
             });
+
+
         }
 
         public ToggleButtonViewModel TSP { get; }
@@ -105,6 +119,8 @@ namespace Spongbob.ViewModels
                 FilePath = result;
             }
         }
+
+        public ReactiveCommand<Unit, Unit> Visualize { get; set; }
 
         public ReactiveCommand<Unit, Unit> Search { get; set; }
         public bool CanSearch
