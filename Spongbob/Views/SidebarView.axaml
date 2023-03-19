@@ -12,7 +12,7 @@
 	</UserControl.Styles>
 	<Border CornerRadius="28" ClipToBounds="True" Background="{StaticResource Secondary}">
 		<Grid Margin="10 20 10 0" RowDefinitions="Auto,*">
-			<StackPanel Spacing="6" Grid.Row="0">
+			<StackPanel Spacing="6" Grid.Row="0" IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNull}}">
 				<TextBlock Text="Input Map"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
@@ -46,6 +46,49 @@
 						HorizontalAlignment="Center"
 						HorizontalContentAlignment="Center"
 						CornerRadius="71"/>
+			</StackPanel>
+			<StackPanel Spacing="6" Grid.Row="0" IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNotNull}}">
+				<TextBlock Text="Route"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="{Binding Route}"
+						   FontSize="14"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   TextWrapping="Wrap"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="Node"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="{Binding Result.NodesCount}"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="Steps"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="{Binding Result.Steps}"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="Time"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<TextBlock Text="{Binding Result.Time, StringFormat='{}{0} ms'}"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<Button Command="{Binding Reset}"
+						Content="Reset" Padding="0 3"
+						Width="180"
+						Background="{StaticResource PrimaryPink}"
+						HorizontalAlignment="Center"
+						HorizontalContentAlignment="Center"
+						CornerRadius="71"/>
+				
 			</StackPanel>
 			<Image Source="avares://Spongbob/Assets/sponsgar.png" 
 				   Grid.Row="1"

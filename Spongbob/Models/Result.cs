@@ -10,9 +10,9 @@ namespace Spongbob.Models
     {
         public readonly List<char> Route = new();
         public int[,] Tiles;
-        public int NodesCount = 0;
+        public int NodesCount { get; set; } = 0;
         public int Steps { get => Route.Count; }
-        public long Time;
+        public long Time { get; set; }
 
         public Result(int width, int height) {
             Tiles = new int[height, width];

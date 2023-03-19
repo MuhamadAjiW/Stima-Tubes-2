@@ -23,6 +23,11 @@ namespace Spongbob.Models
             this.Height = height;
         }
 
+        public Graph?[,] Tiles
+        {
+            get => tiles;
+        }
+
         public void SetTile(int i, int j, bool isTreasure, bool isStart)
         {
             Graph tile = new(j, i, isTreasure);

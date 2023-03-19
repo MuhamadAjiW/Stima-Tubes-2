@@ -2,22 +2,18 @@
 using Avalonia.Controls;
 using DynamicData.Binding;
 using ReactiveUI;
-using Spongbob.Class;
+using Spongbob.Models;
 using Spongbob.Views;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Spongbob.ViewModels
 {
     public class ResultViewModel: ViewModelBase
     {
         public Grid? Container { get; set; }
-        public List<TileViewModel> tiles = new();
+        public List<TileViewModel> Tiles { get; } = new();
+
 
         public ResultViewModel() {
             this.WhenPropertyChanged(x => x.Map).Subscribe(RenderMap);
@@ -41,24 +37,31 @@ namespace Spongbob.ViewModels
 
             Container.ColumnDefinitions.Clear();
 
+            var columnDefinitions = new ColumnDefinitions();
+
             for (int i = 0; i < Map.Width; i++)
             {
-                Container.ColumnDefinitions.Add(new ColumnDefinition()
+                columnDefinitions.Add(new ColumnDefinition()
                 {
                     Width = GridLength.Star,
                 });
             }
 
             Container.RowDefinitions.Clear();
-            tiles.Clear();
+            var rowDefinitions = new RowDefinitions();
+
+            Tiles.Clear();
 
             for (int i = 0; i < Map.Height; i++)
             {
-                Container.RowDefinitions.Add(new RowDefinition()
+                rowDefinitions.Add(new RowDefinition()
                 {
                     Height = GridLength.Star,
                 });
             }
+
+            Container.ColumnDefinitions = columnDefinitions;
+            Container.RowDefinitions = rowDefinitions;
 
             for (int i = 0; i < Map.Height; i++)
             {
@@ -82,8 +85,8 @@ namespace Spongbob.ViewModels
                     }
 
                     var tile = new TileViewModel(i, j, type);
-                    tiles.Add(tile);
-                    var tileView = new TileView()
+                    Tiles.Add(tile);
+                    var tileView = new Views.TileView()
                     {
                         DataContext = tile
                     };
@@ -95,6 +98,21 @@ namespace Spongbob.ViewModels
             }
 
 
+        }
+
+        public Result RunSearch(bool bfs, bool tsp)
+        {
+            Algorithm algorithm;
+
+            if (bfs)
+            {
+                algorithm = new BFS(Map!, tsp);
+            } else
+            {
+                algorithm = new DFS(Map!, tsp);
+            }
+
+            return algorithm.JustRun();
         }
     }
 }

@@ -21,11 +21,15 @@
 		<Style Selector="Panel.start">
 			<Setter Property="Background" Value="LawnGreen"/>
 		</Style>
+		<Style Selector="Panel.visited">
+			<Setter Property="Background" Value="Cyan"/>
+		</Style>
 	</UserControl.Styles>
 	<Panel
 		   Classes.void="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.VOID}}"
 		Classes.treasure="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"
 		Classes.start="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.START}}"
+		Classes.visited="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.VISITED}}"
 		   >
 		<Image IsVisible="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
 			   Source="avares://Spongbob/Assets/patrick.png"/>
