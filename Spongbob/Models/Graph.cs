@@ -21,8 +21,8 @@ namespace Spongbob.Models
         private bool isTreasure = false;
         public Tuple<int, int> Pos;
         public TileView TileView { get; set; } = TileView.NotVisited;
-        private readonly List<BranchState> states = new();
-        private readonly List<BranchState> backStates = new();
+        public TileState states { get; set; } = TileState.NotFound;
+        public TileState backStates { get; set; } = TileState.NotFound;
         private readonly Graph?[] neighbors =
         {
             null,
@@ -60,79 +60,5 @@ namespace Spongbob.Models
         {
             neighbors[(int)loc] = neighbor;
         }
-        
-        public BranchState? GetState(string branchID, bool exact = false)
-        {
-            foreach (var state in states)
-            {
-                if (exact)
-                {
-                    if (state.ID == branchID)
-                        return state;
-                }
-                else if (state.IsIn(branchID))
-                {
-                    return state;
-                }
-            }
-            return null;
-        }
-
-        public void SetState(string branchID, TileState state)
-        {
-            BranchState? bState = GetState(branchID, true);
-            if (bState != null)
-            {
-                bState.State = state;
-            } else
-            {
-                bState = new BranchState(branchID);
-                bState.State = state;
-                states.Add(bState);
-            }
-        }
-
-        public BranchState? GetBackState(string branchID, bool exact = false)
-        {
-            foreach (var state in backStates)
-            {
-                if (exact)
-                {
-                    if (state.ID == branchID)
-                        return state;
-                }
-                else if (state.IsIn(branchID))
-                {
-                    return state;
-                }
-            }
-            return null;
-        }
-
-        public void SetBackState(string branchID, TileState state)
-        {
-            BranchState? bState = GetBackState(branchID, true);
-            if (bState != null)
-            {
-                bState.State = state;
-            }
-            else
-            {
-                bState = new BranchState(branchID);
-                bState.State = state;
-                backStates.Add(bState);
-            }
-        }
-
-        public void ResetState()
-        {
-            states.Clear();
-        }
-
-        public void ResetBackState()
-        {
-            backStates.Clear();
-        }
-
     }
 }

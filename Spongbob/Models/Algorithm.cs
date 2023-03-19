@@ -107,6 +107,41 @@ namespace Spongbob.Models
 
         public abstract Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation);
 
+        public Graph getGraphStep(char idChar, Graph tile, bool reversed)
+        {
+            if (!reversed)
+            {
+                switch (idChar)
+                {
+                    case '0':
+                        return tile.Neighbors[0]!;
+                    case '1':
+                        return tile.Neighbors[1]!;
+                    case '2':
+                        return tile.Neighbors[2]!;
+                    case '3':
+                        return tile.Neighbors[3]!;
+                    default:
+                        throw new Exception("Invalid direction");
+                }
+            }
+            else
+            {
+                switch (idChar)
+                {
+                    case '0':
+                        return tile.Neighbors[2]!;
+                    case '1':
+                        return tile.Neighbors[3]!;
+                    case '2':
+                        return tile.Neighbors[0]!;
+                    case '3':
+                        return tile.Neighbors[1]!;
+                    default:
+                        throw new Exception("Invalid direction");
+                }
+            }
+        }
 
     }
 }

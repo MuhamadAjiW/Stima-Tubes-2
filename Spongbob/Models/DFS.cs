@@ -139,11 +139,11 @@ namespace Spongbob.Models
 
             if (IsBack)
             {
-                tile.SetBackState(id, TileState.Visited);
+                tile.backStates = TileState.Visited;
             }
             else
             {
-                tile.SetState(id, TileState.Visited);
+                tile.states = TileState.Visited;
             }
 
             if (!IsBack && tile.IsTreasure)
@@ -181,10 +181,12 @@ namespace Spongbob.Models
 
             List<Tuple<Graph?, int>> neighborsData = new();
             for(int i = 0; i < tile.Neighbors.Length; i++){
-                if (tile.Neighbors[i] == null) continue;
-                if (IsBack && tile.Neighbors[i]?.GetBackState(id)?.State == TileState.Visited) continue;
-                if (IsBack && tile.Neighbors[i] == map.Start) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
-                if (tile.Neighbors[i]?.GetState(id)?.State != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
+                Graph? candidate = tile.Neighbors[i];
+                if (candidate == null) continue;
+                if (IsBack && candidate?.backStates == TileState.Visited) continue;
+                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
+                if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
             /*
             List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
@@ -203,9 +205,10 @@ namespace Spongbob.Models
             {
                 List<Tuple<Graph?, int>> neighborsStuckData = new();
                 for(int i = 0; i < tile.Neighbors.Length; i++){
-                    if (tile.Neighbors[i] != null &&
-                        tile.Neighbors[i]?.GetBackState(id)?.State != TileState.Visited &&
-                        tile.Neighbors[i]?.GetState(id)?.State == TileState.Visited
+                    Graph? candidate = tile.Neighbors[i];
+                    if (candidate != null &&
+                        candidate?.backStates != TileState.Visited &&
+                        candidate?.states == TileState.Visited
                     ) neighborsStuckData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 }
 

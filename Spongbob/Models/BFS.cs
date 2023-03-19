@@ -183,8 +183,8 @@ namespace Spongbob.Models
             Graph tile = el!.Item2;
 
             if (IsBack)
-                tile.SetBackState(id, TileState.Visited);
-            else tile.SetState(id, TileState.Visited);
+                tile.backStates = TileState.Visited;
+            else tile.states = TileState.Visited;
 
             if (!IsBack && tile.IsTreasure)
             {
@@ -224,10 +224,12 @@ namespace Spongbob.Models
 
             List<Tuple<Graph?, int>> neighborsData = new();
             for(int i = 0; i < tile.Neighbors.Length; i++){
-                if (tile.Neighbors[i] == null) continue;
-                if (IsBack && tile.Neighbors[i]?.GetBackState(id)?.State == TileState.Visited) continue;
-                if (IsBack && tile.Neighbors[i] == map.Start) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
-                if (tile.Neighbors[i]?.GetState(id)?.State != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
+                Graph? candidate = tile.Neighbors[i];
+                if (candidate == null) continue;
+                if (IsBack && candidate?.backStates == TileState.Visited) continue;
+                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
+                if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
             /*
             List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
@@ -246,9 +248,10 @@ namespace Spongbob.Models
             {
                 List<Tuple<Graph?, int>> neighborsStuckData = new();
                 for(int i = 0; i < tile.Neighbors.Length; i++){
-                    if (tile.Neighbors[i] != null &&
-                        tile.Neighbors[i]?.GetBackState(id)?.State != TileState.Visited &&
-                        tile.Neighbors[i]?.GetState(id)?.State == TileState.Visited
+                    Graph? candidate = tile.Neighbors[i];
+                    if (candidate != null &&
+                        candidate?.backStates != TileState.Visited &&
+                        candidate?.states == TileState.Visited
                     ) neighborsStuckData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 }
 
@@ -285,6 +288,7 @@ namespace Spongbob.Models
                 started = true;
                 treasureCounts = 0;
                 nonTSPRoute.Clear();
+                map.ResetState();
                 graphsprio1.Enqueue(new Tuple<string, Graph>("S", map.Start));
             }
         }
@@ -326,11 +330,11 @@ namespace Spongbob.Models
 
                 if (IsBack)
                 {
-                    tile.SetBackState(id, TileState.Visited);
+                    tile.backStates = TileState.Visited;
                 }
                 else
                 {
-                    tile.SetState(id, TileState.Visited);
+                    tile.states = TileState.Visited;
                 }
 
                 if (!nonTSPRoute.Contains(previousTile.Pos))
@@ -344,11 +348,11 @@ namespace Spongbob.Models
 
                 if (IsBack)
                 {
-                    tile.SetBackState(id, TileState.Visited);
+                    tile.backStates = TileState.Visited;
                 }
                 else
                 {
-                    tile.SetState(id, TileState.Visited);
+                    tile.states = TileState.Visited;
                 }
 
                 return new Tuple<string, Graph, Graph>(id.Substring(0, previous.Length + 1), tile, previousTile);
@@ -369,11 +373,11 @@ namespace Spongbob.Models
             tile.TileView = TileView.Visited;
             if (IsBack)
             {
-                tile.SetBackState(id, TileState.Visited);
+                tile.backStates = TileState.Visited;
             }
             else
             {
-                tile.SetState(id, TileState.Visited);
+                tile.states = TileState.Visited;
             }
 
             if (!IsBack && tile.IsTreasure)
@@ -411,12 +415,14 @@ namespace Spongbob.Models
             }
 
             List<Tuple<Graph?, int>> neighborsData = new();
-            for(int i = 0; i < tile.Neighbors.Length; i++){
-                if (tile.Neighbors[i] == null) continue;
-                if (IsBack && tile.Neighbors[i]?.GetBackState(id)?.State == TileState.Visited) continue;
-                if (graphsprio1.Any(s => s.Item2 == tile.Neighbors[i])) continue;
-                if (IsBack && tile.Neighbors[i] == map.Start) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
-                if (tile.Neighbors[i]?.GetState(id)?.State != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
+            for(int i = 0; i < tile.Neighbors.Length; i++)
+            {
+                Graph? candidate = tile.Neighbors[i];
+                if (candidate == null) continue;
+                if (IsBack && candidate?.backStates == TileState.Visited) continue;
+                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
+                if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
 
             int neighborsCount = neighborsData.Count;
@@ -425,9 +431,10 @@ namespace Spongbob.Models
             {
                 List<Tuple<Graph?, int>> neighborsStuckData = new();
                 for(int i = 0; i < tile.Neighbors.Length; i++){
-                    if (tile.Neighbors[i] != null &&
-                        tile.Neighbors[i]?.GetBackState(id)?.State != TileState.Visited &&
-                        tile.Neighbors[i]?.GetState(id)?.State == TileState.Visited
+                    Graph? candidate = tile.Neighbors[i];
+                    if (candidate != null &&
+                        candidate?.backStates != TileState.Visited &&
+                        candidate?.states == TileState.Visited
                     ) neighborsStuckData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 }
 
@@ -441,15 +448,16 @@ namespace Spongbob.Models
             return new Tuple<string, Graph, Graph>(id, tile, previousTile);
         }
 
-        public override async Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation)
+        public override async Task RunProper(Callback callback, Func<int> getDelay,
+            CancellationTokenSource cancellation)
         {
-            
+
             Result res = new(map.Width, map.Height);
             string id = "";
             string backId = "";
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
-            
+
             initialize();
             Graph position = map.Start;
 
@@ -459,32 +467,39 @@ namespace Spongbob.Models
                 {
                     return;
                 }
-                if(!IsBack)
+
+                if (!IsBack)
                     Console.WriteLine("Current id: " + id);
                 else Console.WriteLine("Current id: " + backId);
-                
+
                 Console.Write("graphsprio1: ");
-                for(int i = 0; i < graphsprio1.Count(); i++){
+                for (int i = 0; i < graphsprio1.Count(); i++)
+                {
                     Console.Write(graphsprio1.ElementAt(i).Item1 + " ");
                 }
+
                 Console.Write("\n");
 
                 Console.Write("graphsprio2: ");
-                for(int i = 0; i < graphsprio2.Count(); i++){
+                for (int i = 0; i < graphsprio2.Count(); i++)
+                {
                     Console.Write(graphsprio2.ElementAt(i).Item1 + " ");
                 }
+
                 Console.Write("\n");
-                
+
                 Console.Write("stucks: ");
-                for(int i = 0; i < stucks.Count(); i++){
+                for (int i = 0; i < stucks.Count(); i++)
+                {
                     Console.Write(stucks.ElementAt(i).Item1 + " ");
                 }
+
                 Console.Write("\n");
 
 
                 if (!isTreasureDone && graphsprio1.TryPeek(out var graph))
                     lastTreasure = graph.Item2;
-                
+
                 if (!isTreasureDone && graphsprio2.TryPeek(out var graph2))
                     lastTreasure = graph2.Item2;
 
@@ -495,68 +510,38 @@ namespace Spongbob.Models
                     step = RunAndVisualize(backId, position);
                     backId = step.Item1;
                 }
-                else{
+                else
+                {
                     step = RunAndVisualize(id, position);
                     id = step.Item1;
 
-                    if(!isTreasureDone) backId = id;
-                } 
+                    if (!isTreasureDone) backId = id;
+                }
+
                 position = step.Item2;
                 callback(step);
                 await Task.Delay(getDelay());
             }
+
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;
 
-            if (isTSP) 
+            if (isTSP)
                 GetResult(res, backId);
             else
                 GetResult(res, id);
-           
+
             //print result
             Console.WriteLine("Result: ");
             Console.WriteLine("Time: " + res.Time + "ms");
             Console.WriteLine("Nodes: " + res.NodesCount);
-            for(int i = 0; i < res.Route.Count(); i++){
+            for (int i = 0; i < res.Route.Count(); i++)
+            {
                 Console.Write(res.Route.ElementAt(i) + " ");
             }
+
             Console.Write("\n");
 
-        }
-
-
-        public Graph getGraphStep(char idChar, Graph tile, bool reversed){
-            if (!reversed)
-            {
-                switch (idChar)
-                {
-                    case '0':
-                        return tile.Neighbors[0]!;
-                    case '1':
-                        return tile.Neighbors[1]!;
-                    case '2':
-                        return tile.Neighbors[2]!;
-                    case '3':
-                        return tile.Neighbors[3]!;
-                    default:
-                        throw new Exception("Invalid direction");
-                }
-            } else
-            {
-                switch (idChar)
-                {
-                    case '0':
-                        return tile.Neighbors[2]!;
-                    case '1':
-                        return tile.Neighbors[3]!;
-                    case '2':
-                        return tile.Neighbors[0]!;
-                    case '3':
-                        return tile.Neighbors[1]!;
-                    default:
-                        throw new Exception("Invalid direction");
-                }
-            }
         }
     }
 }

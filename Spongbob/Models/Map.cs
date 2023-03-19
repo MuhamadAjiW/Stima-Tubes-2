@@ -62,7 +62,14 @@ namespace Spongbob.Models
         public void ResetState()
         {
             foreach (Graph? tile in tiles)
-                tile?.ResetState();
+            {
+                if (tile != null)
+                {
+                    tile!.states = TileState.NotFound;
+                    tile!.backStates = TileState.NotFound;
+                }
+            }
+
         }
 
         private bool CheckValid(int i, int j)
