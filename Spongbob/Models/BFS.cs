@@ -114,11 +114,9 @@ namespace Spongbob.Models
 
             
             if(!id.StartsWith(previous)){
-
                 return previous.Substring(0, previous.Length - 1);
             }
             if(id.Length > previous.Length + 1){
-                
                 return id.Substring(0, previous.Length + 1);
             }
             
@@ -269,21 +267,13 @@ namespace Spongbob.Models
             
             if(!id.StartsWith(previous) && id != previous){
                 tile = getGraphStep(previous[previous.Length - 1], previousTile, true);
-                if (IsBack)
-                    tile.SetBackState(id, TileState.Visited);
-                else
-                    tile.SetState(id, TileState.Visited);
+                tile.SetTileView(TileView.BackTracked);
 
                 return new Tuple<string, Graph>(previous.Substring(0, previous.Length - 1), tile);
             }
             if(id.Length > previous.Length + 1){
                 tile = getGraphStep(id[previous.Length], previousTile, false);
-                if (IsBack)
-                    tile.SetBackState(id, TileState.Visited);
-                else
-                    tile.SetState(id, TileState.Visited);
-
-
+                tile.SetTileView(TileView.BackTracked);
                 return new Tuple<string, Graph>(id.Substring(0, previous.Length + 1), tile);
             }
             
@@ -303,10 +293,15 @@ namespace Spongbob.Models
 
             tile = el!.Item2;
 
+            tile.SetTileView(TileView.Visited);
             if (IsBack)
+            {
                 tile.SetBackState(id, TileState.Visited);
+            }
             else
+            {
                 tile.SetState(id, TileState.Visited);
+            }
 
             if (!IsBack && tile.IsTreasure)
             {

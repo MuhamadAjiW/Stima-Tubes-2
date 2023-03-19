@@ -13,6 +13,14 @@ namespace Spongbob.Models
         BackTracked,
         BackVisited
     }
+
+    public enum TileView
+    {
+        NotVisited,
+        Visited,
+        BackTracked
+    }
+    
     public  class BranchState
     {
         public TileState State = TileState.NotFound;

@@ -137,8 +137,13 @@ namespace Spongbob.Models
             Graph tile = el!.Item2;
 
             if (IsBack)
+            {
                 tile.SetBackState(id, TileState.Visited);
-            else tile.SetState(id, TileState.Visited);
+            }
+            else
+            {
+                tile.SetState(id, TileState.Visited);
+            }
 
             if (!IsBack && tile.IsTreasure)
             {
