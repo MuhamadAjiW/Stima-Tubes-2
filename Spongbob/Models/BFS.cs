@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.OpenGL;
 
 namespace Spongbob.Models
 {
@@ -12,7 +13,7 @@ namespace Spongbob.Models
     {
         Queue<Tuple<string, Graph>> graphsprio1 = new();
         Queue<Tuple<string, Graph>> graphsprio2 = new();
-        Queue<Tuple<string, Graph>> stucks = new();
+        private Queue<Tuple<string, Graph>> stucks = new();
         public BFS(Map map, bool isTSP) : base(map, isTSP)
         {
         }
@@ -82,6 +83,50 @@ namespace Spongbob.Models
             return res;
         }
 
+        public Tuple<string, Graph> refactorRoute(Tuple<string, Graph> route, string id)
+        {
+            string oldRoute = route.Item1;
+
+            if (oldRoute != id)
+            {
+                int prefixLen = 0;
+                while (oldRoute[prefixLen] == id[prefixLen])
+                {
+                    prefixLen++;
+                }
+
+                string newRoute = id;
+                for (int j = id.Length-1; j >= prefixLen; j--)
+                {
+                    switch (id[j])
+                    {
+                        case '0':
+                            newRoute += '2';
+                            break;
+
+                        case '1':
+                            newRoute += '3';
+                            break;
+
+                        case '2':
+                            newRoute += '0';
+                            break;
+                        case '3':
+                            newRoute += '1';
+                            break;
+                    }
+                }
+                newRoute += oldRoute.Substring(prefixLen, oldRoute.Length - prefixLen);
+
+                return new Tuple<string, Graph>(newRoute, route.Item2);
+            }
+            else
+            {
+                return route;
+            }
+
+        }
+
         public override string Next(string previous)
         {
             if (!started)
@@ -145,8 +190,11 @@ namespace Spongbob.Models
             {
                 Console.WriteLine("Treasure found: " + id + "\n");
                 
-                for(int i = 0; i < graphsprio1.Count(); i++){
-                    graphsprio2.Enqueue(graphsprio1.ElementAt(i));
+
+                
+                for(int i = 0; i < graphsprio1.Count(); i++)
+                {
+                    graphsprio2.Enqueue(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
                 graphsprio1.Clear();
 
@@ -236,6 +284,7 @@ namespace Spongbob.Models
             {
                 started = true;
                 treasureCounts = 0;
+                nonTSPRoute.Clear();
                 graphsprio1.Enqueue(new Tuple<string, Graph>("S", map.Start));
             }
         }
@@ -246,11 +295,17 @@ namespace Spongbob.Models
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
-                loc = 2;
                 graphsprio2.TryPeek(out el);
+                for (int i = 0; i < graphsprio2.Count(); i++)
+                {
+                    graphsprio1.Enqueue(graphsprio2.ElementAt(i));
+                }
+                graphsprio2.Clear();
 
-                if(el == null){
-                    loc = 3;
+                graphsprio1.TryPeek(out el);
+
+                if (el == null){
+                    loc = 2;
                     stucks.TryPeek(out el);
                 }
             }
@@ -267,16 +322,35 @@ namespace Spongbob.Models
 
             
             if(!id.StartsWith(previous) && id != previous){
-                previousTile.TileView = TileView.BackTracked;
                 tile = getGraphStep(previous[previous.Length - 1], previousTile, true);
-                tile.TileView = TileView.BackTracked;
+
+                if (IsBack)
+                {
+                    tile.SetBackState(id, TileState.Visited);
+                }
+                else
+                {
+                    tile.SetState(id, TileState.Visited);
+                }
+
+                if (!nonTSPRoute.Contains(previousTile.Pos))
+                    previousTile.TileView = TileView.BackTracked;
 
                 return new Tuple<string, Graph, Graph>(previous.Substring(0, previous.Length - 1), tile, previousTile);
             }
             if(id.Length > previous.Length + 1){
                 previousTile.TileView = TileView.Visited;
                 tile = getGraphStep(id[previous.Length], previousTile, false);
-                tile.TileView = TileView.BackTracked;
+
+                if (IsBack)
+                {
+                    tile.SetBackState(id, TileState.Visited);
+                }
+                else
+                {
+                    tile.SetState(id, TileState.Visited);
+                }
+
                 return new Tuple<string, Graph, Graph>(id.Substring(0, previous.Length + 1), tile, previousTile);
             }
             
@@ -285,9 +359,6 @@ namespace Spongbob.Models
                     graphsprio1.TryDequeue(out el);
                     break;
                 case 2:
-                    graphsprio2.TryDequeue(out el);
-                    break;
-                case 3:
                     stucks.TryDequeue(out el);
                     break;
             }
@@ -307,10 +378,11 @@ namespace Spongbob.Models
 
             if (!IsBack && tile.IsTreasure)
             {
+                GetNonTSPRoute(id);
                 Console.WriteLine("Treasure found: " + id + "\n");
                 
                 for(int i = 0; i < graphsprio1.Count(); i++){
-                    graphsprio2.Enqueue(graphsprio1.ElementAt(i));
+                    graphsprio2.Enqueue(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
                 graphsprio1.Clear();
 
@@ -342,6 +414,7 @@ namespace Spongbob.Models
             for(int i = 0; i < tile.Neighbors.Length; i++){
                 if (tile.Neighbors[i] == null) continue;
                 if (IsBack && tile.Neighbors[i]?.GetBackState(id)?.State == TileState.Visited) continue;
+                if (graphsprio1.Any(s => s.Item2 == tile.Neighbors[i])) continue;
                 if (IsBack && tile.Neighbors[i] == map.Start) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 if (tile.Neighbors[i]?.GetState(id)?.State != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
             }

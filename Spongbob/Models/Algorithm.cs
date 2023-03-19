@@ -17,6 +17,7 @@ namespace Spongbob.Models
         protected Graph? lastTreasure;
         protected bool isTreasureDone = false;
         protected bool isTSPDone = false;
+        protected List<Tuple<int, int>> nonTSPRoute = new();
 
         public delegate void Callback(Tuple<string, Graph, Graph> step);
 
@@ -66,6 +67,35 @@ namespace Spongbob.Models
                     res.Route.Add('L');
                 }
                 res.Tiles[y, x]++;
+            }
+        }
+
+        public void GetNonTSPRoute(string route)
+        {
+            int limit = route.Length;
+            int y = map.StartPos.Item2;
+            int x = map.StartPos.Item1;
+            nonTSPRoute.Add(map.StartPos);
+            for (int i = 1; i < limit; i++)
+            {
+                if (route[i] == '0')
+                {
+                    y--;
+                }
+                else if (route[i] == '1')
+                {
+                    x++;
+                }
+                else if (route[i] == '2')
+                {
+                    y++;
+                }
+                else if (route[i] == '3')
+                {
+                    x--;
+                }
+
+                nonTSPRoute.Add(new Tuple<int, int>(x, y));
             }
         }
 
