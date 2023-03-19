@@ -142,6 +142,49 @@ namespace Spongbob.Models
                 }
             }
         }
+        public Tuple<string, Graph> refactorRoute(Tuple<string, Graph> route, string id)
+        {
+            string oldRoute = route.Item1;
+
+            if (oldRoute != id)
+            {
+                int prefixLen = 0;
+                while (oldRoute[prefixLen] == id[prefixLen])
+                {
+                    prefixLen++;
+                }
+
+                string newRoute = id;
+                for (int j = id.Length - 1; j >= prefixLen; j--)
+                {
+                    switch (id[j])
+                    {
+                        case '0':
+                            newRoute += '2';
+                            break;
+
+                        case '1':
+                            newRoute += '3';
+                            break;
+
+                        case '2':
+                            newRoute += '0';
+                            break;
+                        case '3':
+                            newRoute += '1';
+                            break;
+                    }
+                }
+                newRoute += oldRoute.Substring(prefixLen, oldRoute.Length - prefixLen);
+
+                return new Tuple<string, Graph>(newRoute, route.Item2);
+            }
+            else
+            {
+                return route;
+            }
+        }
+
 
     }
 }

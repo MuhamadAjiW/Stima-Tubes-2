@@ -18,6 +18,17 @@ namespace Spongbob.Models
         {
         }
 
+        public void initialize()
+        {
+            graphsprio1.Clear();
+            graphsprio2.Clear();
+            started = true;
+            treasureCounts = 0;
+            nonTSPRoute.Clear();
+            map.ResetState();
+            graphsprio1.Enqueue(new Tuple<string, Graph>("S", map.Start));
+        }
+
         public override Result JustRun()
         {
             Result res = new(map.Width, map.Height);
@@ -25,6 +36,9 @@ namespace Spongbob.Models
             string backId = "";
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
+
+            initialize();
+
             while (!IsDone)
             {
                 if(!IsBack)
@@ -83,68 +97,23 @@ namespace Spongbob.Models
             return res;
         }
 
-        public Tuple<string, Graph> refactorRoute(Tuple<string, Graph> route, string id)
-        {
-            string oldRoute = route.Item1;
-
-            if (oldRoute != id)
-            {
-                int prefixLen = 0;
-                while (oldRoute[prefixLen] == id[prefixLen])
-                {
-                    prefixLen++;
-                }
-
-                string newRoute = id;
-                for (int j = id.Length-1; j >= prefixLen; j--)
-                {
-                    switch (id[j])
-                    {
-                        case '0':
-                            newRoute += '2';
-                            break;
-
-                        case '1':
-                            newRoute += '3';
-                            break;
-
-                        case '2':
-                            newRoute += '0';
-                            break;
-                        case '3':
-                            newRoute += '1';
-                            break;
-                    }
-                }
-                newRoute += oldRoute.Substring(prefixLen, oldRoute.Length - prefixLen);
-
-                return new Tuple<string, Graph>(newRoute, route.Item2);
-            }
-            else
-            {
-                return route;
-            }
-
-        }
-
         public override string Next(string previous)
         {
-            if (!started)
-            {
-                started = true;
-                treasureCounts = 0;
-                graphsprio1.Enqueue(new Tuple<string, Graph>("S", map.Start));
-            }
-
             int loc = 1;
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
-                loc = 2;
                 graphsprio2.TryPeek(out el);
+                for (int i = 0; i < graphsprio2.Count(); i++)
+                {
+                    graphsprio1.Enqueue(graphsprio2.ElementAt(i));
+                }
+                graphsprio2.Clear();
 
-                if(el == null){
-                    loc = 3;
+                graphsprio1.TryPeek(out el);
+
+                if (el == null){
+                    loc = 2;
                     stucks.TryPeek(out el);
                 }
             }
@@ -173,9 +142,6 @@ namespace Spongbob.Models
                     graphsprio1.TryDequeue(out el);
                     break;
                 case 2:
-                    graphsprio2.TryDequeue(out el);
-                    break;
-                case 3:
                     stucks.TryDequeue(out el);
                     break;
             }
@@ -282,17 +248,6 @@ namespace Spongbob.Models
             }
         }
 
-        public void initialize(){
-            if (!started)
-            {
-                started = true;
-                treasureCounts = 0;
-                nonTSPRoute.Clear();
-                map.ResetState();
-                graphsprio1.Enqueue(new Tuple<string, Graph>("S", map.Start));
-            }
-        }
-
         public override Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile)
         {
             int loc = 1;
@@ -372,13 +327,8 @@ namespace Spongbob.Models
             previousTile.TileView = TileView.Visited;
             tile.TileView = TileView.Visited;
             if (IsBack)
-            {
                 tile.backStates = TileState.Visited;
-            }
-            else
-            {
-                tile.states = TileState.Visited;
-            }
+            else tile.states = TileState.Visited;
 
             if (!IsBack && tile.IsTreasure)
             {
@@ -541,7 +491,6 @@ namespace Spongbob.Models
             }
 
             Console.Write("\n");
-
         }
     }
 }
