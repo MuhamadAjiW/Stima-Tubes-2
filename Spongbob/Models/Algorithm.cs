@@ -42,19 +42,27 @@ namespace Spongbob.Models
         public void GetResult(Result res, string final)
         {
             int limit = final.Length;
+            int y = map.StartPos.Item2;
+            int x = map.StartPos.Item1;
+            res.Tiles[y, x]++;
             for(int i = 1; i < limit; i++){
                 if(final[i] == '0'){
+                    y--;
                     res.Route.Add('U');
                 }
                 else if(final[i] == '1'){
+                    x++;
                     res.Route.Add('R');
                 }
                 else if(final[i] == '2'){
+                    y++;
                     res.Route.Add('D');
                 }
                 else if(final[i] == '3'){
+                    x--;
                     res.Route.Add('L');
                 }
+                res.Tiles[y, x]++;
             }
         }
 
@@ -62,7 +70,7 @@ namespace Spongbob.Models
 
         public abstract Result JustRun();
 
-        public abstract Tuple<String, Graph> RunAndVisualize(string previous, Graph previousTile);
+        public abstract Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile);
 
 
     }

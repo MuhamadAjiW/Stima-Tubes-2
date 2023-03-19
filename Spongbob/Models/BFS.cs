@@ -239,7 +239,7 @@ namespace Spongbob.Models
             }
         }
 
-        public override Tuple<String, Graph> RunAndVisualize(string previous, Graph previousTile)
+        public override Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile)
         {
             int loc = 1;
             graphsprio1.TryPeek(out var el);
@@ -266,18 +266,18 @@ namespace Spongbob.Models
 
             
             if(!id.StartsWith(previous) && id != previous){
+                previousTile.SetTileView(TileView.BackTracked);
                 tile = getGraphStep(previous[previous.Length - 1], previousTile, true);
                 tile.SetTileView(TileView.BackTracked);
 
-                return new Tuple<string, Graph>(previous.Substring(0, previous.Length - 1), tile);
+                return new Tuple<string, Graph, Graph>(previous.Substring(0, previous.Length - 1), tile, previousTile);
             }
             if(id.Length > previous.Length + 1){
+                previousTile.SetTileView(TileView.BackTracked);
                 tile = getGraphStep(id[previous.Length], previousTile, false);
                 tile.SetTileView(TileView.BackTracked);
-                return new Tuple<string, Graph>(id.Substring(0, previous.Length + 1), tile);
+                return new Tuple<string, Graph, Graph>(id.Substring(0, previous.Length + 1), tile, previousTile);
             }
-            
-            
             
             switch (loc){    
                 case 1:
@@ -325,7 +325,7 @@ namespace Spongbob.Models
                         graphsprio2.Clear();   
                         graphsprio1.Enqueue(new Tuple<string, Graph>(id, tile));
                     }
-                    return new Tuple<string, Graph>(id, tile);
+                    return new Tuple<string, Graph, Graph>(id, tile, previousTile);
                 }
 
 
@@ -333,7 +333,7 @@ namespace Spongbob.Models
             else if (IsBack && tile == map.Start)
             {
                 isTSPDone = true;
-                return new Tuple<string, Graph>(id, tile);
+                return new Tuple<string, Graph, Graph>(id, tile, previousTile);
             }
 
             List<Tuple<Graph?, int>> neighborsData = new();
@@ -343,16 +343,6 @@ namespace Spongbob.Models
                 if (IsBack && tile.Neighbors[i] == map.Start) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 if (tile.Neighbors[i]?.GetState(id)?.State != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
             }
-            /*
-            List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
-                if (t == null) return false;
-                if (IsBack && t.GetBackState(id)?.State == TileState.Visited) return false;
-                if (IsBack && t == map.Start) return true;
-
-                return t.GetState(id)?.State != TileState.Visited;
-
-            }).ToList();
-            */
 
             int neighborsCount = neighborsData.Count;
             
@@ -366,13 +356,6 @@ namespace Spongbob.Models
                     ) neighborsStuckData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 }
 
-                /*
-                List<Graph?> neighborsStuck = tile.Neighbors.ToList().Where(t =>
-                t != null &&
-                t.GetBackState(id)?.State != TileState.Visited &&
-                t.GetState(id)?.State == TileState.Visited).ToList();
-                */
-
                 neighborsCount += neighborsStuckData.Count;
                 
                 AddToQueue(stucks, neighborsStuckData, id, neighborsCount);
@@ -380,7 +363,7 @@ namespace Spongbob.Models
             
             AddToQueue(graphsprio1, neighborsData, id, neighborsCount);
             
-            return new Tuple<string, Graph>(id, tile);
+            return new Tuple<string, Graph, Graph>(id, tile, previousTile);
         }
 
         public void RunProper(){
@@ -426,7 +409,7 @@ namespace Spongbob.Models
                     lastTreasure = graph2.Item2;
 
 
-                Tuple<String, Graph> step;
+                Tuple<String, Graph, Graph> step;
                 if (IsBack)
                 {
                     step = RunAndVisualize(backId, position);
@@ -439,7 +422,6 @@ namespace Spongbob.Models
                     if(!isTreasureDone) backId = id;
                 } 
                 position = step.Item2;
-                res.NodesCount++;
             }
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;
@@ -457,6 +439,7 @@ namespace Spongbob.Models
                 Console.Write(res.Route.ElementAt(i) + " ");
             }
             Console.Write("\n");
+
         }
 
 

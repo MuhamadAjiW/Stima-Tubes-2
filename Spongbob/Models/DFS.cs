@@ -235,7 +235,7 @@ namespace Spongbob.Models
             }
         }
 
-        public override void RunAndVisualize()
+        public override Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile)
         {
             throw new NotImplementedException();
         }
