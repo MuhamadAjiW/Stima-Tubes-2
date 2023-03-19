@@ -121,7 +121,7 @@ namespace Spongbob.ViewModels
             return algorithm.JustRun();
         }
 
-        public void RunVisualize(bool bfs, bool tsp, CancellationTokenSource cancellation)
+        public void RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             Algorithm algorithm;
 
@@ -149,7 +149,7 @@ namespace Spongbob.ViewModels
                         GetTile(before.Pos.Item2, before.Pos.Item1).State = TileState.BACKTRACKED;
                         break;
                 }
-            }, 1000, cancellation);
+            }, getDelay, cancellation);
         }
     }
 }

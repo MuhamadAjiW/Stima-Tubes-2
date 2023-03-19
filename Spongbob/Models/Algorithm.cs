@@ -75,7 +75,7 @@ namespace Spongbob.Models
 
         public abstract Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile);
 
-        public abstract Task RunProper(Callback callback, int delay, CancellationTokenSource cancellation);
+        public abstract Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation);
 
 
     }

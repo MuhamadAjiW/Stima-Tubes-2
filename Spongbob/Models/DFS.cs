@@ -241,7 +241,7 @@ namespace Spongbob.Models
             throw new NotImplementedException();
         }
 
-        public override Task RunProper(Callback callback, int delay, CancellationTokenSource cancellation)
+        public override Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             throw new NotImplementedException();
         }

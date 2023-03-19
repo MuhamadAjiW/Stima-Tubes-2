@@ -52,7 +52,9 @@ namespace Spongbob.ViewModels
                 SideBar.IsRunning = true;
                 Result.RunVisualize(
                     SideBar.Algorithm.Button1Active,
-                    SideBar.TSP.Button1Active, cancellation);
+                    SideBar.TSP.Button1Active, 
+                    SideBar.GetCurrentDelay,
+                    cancellation);
             }, this.WhenAnyValue(x => x.SideBar.CanSearch));
 
             SideBar.RaisePropertyChanged(nameof(SideBar.Search));

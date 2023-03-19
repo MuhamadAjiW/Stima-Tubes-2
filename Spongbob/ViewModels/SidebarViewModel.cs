@@ -27,6 +27,14 @@ namespace Spongbob.ViewModels
             set => this.RaiseAndSetIfChanged(ref isRunning, value);
         }
 
+        private int delay;
+
+        public int Delay
+        {
+            get => delay;
+            set => this.RaiseAndSetIfChanged(ref delay, value);
+        }
+
         private Result? result;
 
         public Result? Result
@@ -129,5 +137,10 @@ namespace Spongbob.ViewModels
         }
 
         public ReactiveCommand<Unit, Unit> Reset { get; set; }
+
+        public int GetCurrentDelay()
+        {
+            return Delay;
+        }
     }
 }

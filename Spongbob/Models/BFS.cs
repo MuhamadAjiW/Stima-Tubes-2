@@ -368,7 +368,7 @@ namespace Spongbob.Models
             return new Tuple<string, Graph, Graph>(id, tile, previousTile);
         }
 
-        public override async Task RunProper(Callback callback, int delay, CancellationTokenSource cancellation)
+        public override async Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             
             Result res = new(map.Width, map.Height);
@@ -430,7 +430,7 @@ namespace Spongbob.Models
                 } 
                 position = step.Item2;
                 callback(step);
-                await Task.Delay(delay);
+                await Task.Delay(getDelay());
             }
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;

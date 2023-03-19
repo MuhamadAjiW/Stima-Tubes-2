@@ -32,6 +32,7 @@
 						   Foreground="Red"/>
 				<ContentControl Content="{Binding TSP}"/>
 				<ContentControl Content="{Binding Algorithm}"/>
+				<Slider Minimum="5" Maximum="1000" Value="{Binding Delay}"/>
 				<Button Command="{Binding Visualize}"
 						Content="Visualize" Padding="0 3"
 						Width="180"
@@ -81,12 +82,14 @@
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   Foreground="{StaticResource PrimaryPink}"/>
+				<Slider Minimum="5" Maximum="1000" Value="{Binding Delay}" 
+						IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNull}}"/>
 				<Button Command="{Binding Reset}"
-						Content="Reset" Padding="0 3"
 						Width="180"
 						Background="{StaticResource PrimaryPink}"
 						HorizontalAlignment="Center"
 						HorizontalContentAlignment="Center"
+						Content="Reset" Padding="0 3"
 						CornerRadius="71"/>
 				
 			</StackPanel>
