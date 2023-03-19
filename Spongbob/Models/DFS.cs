@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    internal class DFS : Algorithm
+    public class DFS : Algorithm
     {
         Stack<Tuple<string, Graph>> graphsprio1 = new();
         Stack<Tuple<string, Graph>> graphsprio2 = new();

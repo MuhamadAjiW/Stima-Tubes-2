@@ -6,9 +6,9 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    internal class Map
+    public class Map
     {
         private Graph?[,] tiles;
         public int Width, Height;

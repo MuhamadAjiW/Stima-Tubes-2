@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    abstract class Algorithm
+    public abstract class Algorithm
     {
         protected Map map;
         protected bool started = false;

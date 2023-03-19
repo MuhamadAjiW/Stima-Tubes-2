@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    enum TileState
+    public enum TileState
     {
         NotFound,
         Visited,
         BackTracked,
         BackVisited
     }
-    internal class BranchState
+    public  class BranchState
     {
         public TileState State = TileState.NotFound;
         public string ID;

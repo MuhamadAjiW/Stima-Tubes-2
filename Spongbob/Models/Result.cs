@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    internal class Result
+    public class Result
     {
         public readonly List<char> Route = new();
         public int[,] Tiles;

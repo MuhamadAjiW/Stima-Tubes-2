@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    enum Location
+    public enum Location
     {
         Top = 0,
         Right = 1,
         Bottom = 2,
         Left = 3,
     }
-    internal class Graph 
+    public class Graph 
     {
         static int count = 0;
         public int Id;

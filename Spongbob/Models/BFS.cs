@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Spongbob.Class
+namespace Spongbob.Models
 {
-    internal class BFS : Algorithm
+    public class BFS : Algorithm
     {
         Queue<Tuple<string, Graph>> graphsprio1 = new();
         Queue<Tuple<string, Graph>> graphsprio2 = new();
@@ -261,16 +261,30 @@ namespace Spongbob.Class
             }
 
             string id = el.Item1;
+            Graph tile;
 
             Console.WriteLine("next: " + id + "\n");
             Console.Write("\n");
 
             
             if(!id.StartsWith(previous) && id != previous){
-                return new Tuple<string, Graph>(previous.Substring(0, previous.Length - 1), getGraphStep(previous[previous.Length - 1], previousTile, true));
+                tile = getGraphStep(previous[previous.Length - 1], previousTile, true);
+                if (IsBack)
+                    tile.SetBackState(id, TileState.Visited);
+                else
+                    tile.SetState(id, TileState.Visited);
+
+                return new Tuple<string, Graph>(previous.Substring(0, previous.Length - 1), tile);
             }
             if(id.Length > previous.Length + 1){
-                return new Tuple<string, Graph>(id.Substring(0, previous.Length + 1), getGraphStep(id[previous.Length], previousTile, false));
+                tile = getGraphStep(id[previous.Length], previousTile, false);
+                if (IsBack)
+                    tile.SetBackState(id, TileState.Visited);
+                else
+                    tile.SetState(id, TileState.Visited);
+
+
+                return new Tuple<string, Graph>(id.Substring(0, previous.Length + 1), tile);
             }
             
             
@@ -287,11 +301,12 @@ namespace Spongbob.Class
                     break;
             }
 
-            Graph tile = el!.Item2;
+            tile = el!.Item2;
 
             if (IsBack)
                 tile.SetBackState(id, TileState.Visited);
-            else tile.SetState(id, TileState.Visited);
+            else
+                tile.SetState(id, TileState.Visited);
 
             if (!IsBack && tile.IsTreasure)
             {
