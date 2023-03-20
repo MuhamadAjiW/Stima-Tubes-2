@@ -7,6 +7,7 @@ using Spongbob.Views;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Spongbob.ViewModels
 {
@@ -121,7 +122,7 @@ namespace Spongbob.ViewModels
             return algorithm.JustRun();
         }
 
-        public void RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
+        public async Task RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             Algorithm algorithm;
 
@@ -134,7 +135,7 @@ namespace Spongbob.ViewModels
                 algorithm = new DFS(Map!, tsp);
             }
 
-            algorithm.RunProper((step) =>
+            await algorithm.RunProper((step) =>
             {
                 Graph now = step.Item2;
                 Graph before = step.Item3;

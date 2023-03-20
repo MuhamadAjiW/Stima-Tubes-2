@@ -27,12 +27,12 @@ namespace Spongbob.ViewModels
             set => this.RaiseAndSetIfChanged(ref isRunning, value);
         }
 
-        private int delay;
+        private int speed;
 
-        public int Delay
+        public int Speed
         {
-            get => delay;
-            set => this.RaiseAndSetIfChanged(ref delay, value);
+            get => speed;
+            set => this.RaiseAndSetIfChanged(ref speed, value);
         }
 
         private Result? result;
@@ -81,7 +81,7 @@ namespace Spongbob.ViewModels
 
             Visualize = ReactiveCommand.Create(() =>
             {
-
+                return Task.CompletedTask;
             }, this.WhenAnyValue(x => x.CanSearch));
 
             this.WhenValueChanged(x => x.Result).Subscribe(r =>
@@ -128,7 +128,7 @@ namespace Spongbob.ViewModels
             }
         }
 
-        public ReactiveCommand<Unit, Unit> Visualize { get; set; }
+        public ReactiveCommand<Unit, Task> Visualize { get; set; }
 
         public ReactiveCommand<Unit, Unit> Search { get; set; }
         public bool CanSearch
@@ -140,7 +140,7 @@ namespace Spongbob.ViewModels
 
         public int GetCurrentDelay()
         {
-            return Delay;
+            return 1000 - speed;
         }
     }
 }

@@ -46,15 +46,23 @@ namespace Spongbob.ViewModels
                 }
             }, this.WhenAnyValue(x => x.SideBar.CanSearch));
 
-            SideBar.Visualize = ReactiveCommand.Create(() =>
+            SideBar.Visualize = ReactiveCommand.Create(async () =>
             {
                 cancellation = new CancellationTokenSource();
                 SideBar.IsRunning = true;
-                Result.RunVisualize(
+                await Result.RunVisualize(
                     SideBar.Algorithm.Button1Active,
                     SideBar.TSP.Button1Active, 
                     SideBar.GetCurrentDelay,
                     cancellation);
+
+                if (cancellation.IsCancellationRequested) return;
+                Result res = Result.RunSearch(
+                    SideBar.Algorithm.Button1Active,
+                    SideBar.TSP.Button1Active
+                    );
+
+                SideBar.Result = res;
             }, this.WhenAnyValue(x => x.SideBar.CanSearch));
 
             SideBar.RaisePropertyChanged(nameof(SideBar.Search));

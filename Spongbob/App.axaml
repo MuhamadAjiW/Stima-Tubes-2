@@ -1,6 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Spongbob"
+             xmlns:sys="clr-namespace:System"
+			 xmlns:local="using:Spongbob"
              x:Class="Spongbob.App">
 
     <Application.DataTemplates>
@@ -15,8 +16,13 @@
 		<FontFamily x:Key="Montserrat">
 			avares://Spongbob/Assets/Montserrat/Montserrat-Regular.ttf
 		</FontFamily>
-		<SolidColorBrush x:Key="SliderTrackValueFill">Yellow</SolidColorBrush>
-		<SolidColorBrush x:Key="SliderThumbBackground">Yellow</SolidColorBrush>
+		<SolidColorBrush x:Key="SliderThumbBackgroundPointerOver">#FCE2DB</SolidColorBrush>
+		<SolidColorBrush x:Key="SliderThumbBackgroundPressed">#FCE2DB</SolidColorBrush>
+		<SolidColorBrush x:Key="SliderTrackValueFill">#FF8FB1</SolidColorBrush>
+		<SolidColorBrush x:Key="SliderThumbBackground">#FF8FB1</SolidColorBrush>
+		<SolidColorBrush x:Key="SliderTrackValueFillPointerOver">#FF8FB1</SolidColorBrush>
+		<SolidColorBrush x:Key="SliderTrackValueFillPressed">#FF8FB1</SolidColorBrush>
+		<x:Double x:Key="SliderOutsideTickBarThemeHeight">10</x:Double>
 	</Application.Resources>
 
 	<Application.Styles>

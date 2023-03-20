@@ -103,7 +103,7 @@ namespace Spongbob.Models
 
         public abstract Result JustRun();
 
-        public abstract Tuple<String, Graph, Graph, bool> RunAndVisualize(string previous, Graph previousTile);
+        public abstract Tuple<string, Graph, Graph, bool> RunAndVisualize(string previous, Graph previousTile);
 
         public abstract Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation);
 

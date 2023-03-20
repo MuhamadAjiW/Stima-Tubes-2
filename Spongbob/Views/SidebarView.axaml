@@ -32,7 +32,11 @@
 						   Foreground="Red"/>
 				<ContentControl Content="{Binding TSP}"/>
 				<ContentControl Content="{Binding Algorithm}"/>
-				<Slider Minimum="5" Maximum="1000" Value="{Binding Delay}"/>
+				<TextBlock Text="Speed"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<Slider Minimum="0" Maximum="995" Value="{Binding Speed}"/>
 				<Button Command="{Binding Visualize}"
 						Content="Visualize" Padding="0 3"
 						Width="180"
@@ -82,7 +86,11 @@
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   Foreground="{StaticResource PrimaryPink}"/>
-				<Slider Minimum="5" Maximum="1000" Value="{Binding Delay}" 
+				<TextBlock Text="Speed"
+						   FontSize="24"
+						   FontWeight="SemiBold" HorizontalAlignment="Center"
+						   Foreground="{StaticResource PrimaryPink}"/>
+				<Slider Minimum="0" Maximum="995" Value="{Binding Speed}" 
 						IsVisible="{Binding Result, Converter={x:Static ObjectConverters.IsNull}}"/>
 				<Button Command="{Binding Reset}"
 						Width="180"
