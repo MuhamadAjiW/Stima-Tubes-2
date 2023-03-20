@@ -14,6 +14,21 @@ namespace Spongbob.ViewModels
     public class ResultViewModel: ViewModelBase
     {
         public Grid? Container { get; set; }
+        private bool isSearch = false;
+
+        public bool IsSearch
+        {
+            get => isSearch;
+            set => this.RaiseAndSetIfChanged(ref isSearch, value);
+        }
+
+        private bool found = false;
+
+        public bool Found
+        {
+            get => found;
+            set => this.RaiseAndSetIfChanged(ref found, value);
+        }
         public List<TileViewModel> Tiles { get; } = new();
 
 
@@ -109,6 +124,7 @@ namespace Spongbob.ViewModels
 
         public Result RunSearch(bool bfs, bool tsp)
         {
+            IsSearch = true;
             Algorithm algorithm;
 
             if (bfs)
@@ -124,6 +140,7 @@ namespace Spongbob.ViewModels
 
         public async Task RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
         {
+            IsSearch = false;
             Algorithm algorithm;
 
             if (bfs)

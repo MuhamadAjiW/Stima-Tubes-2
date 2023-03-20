@@ -22,13 +22,16 @@ namespace Spongbob.ViewModels
 
             SideBar.Search = ReactiveCommand.Create(() =>
             {
+                Result.Found = true;
                 Result res = Result.RunSearch(
                     SideBar.Algorithm.Button1Active,
                     SideBar.TSP.Button1Active
                     );
-
+                Result.Found = res.Found;
                 SideBar.Result = res;
                 SideBar.IsRunning = true;
+
+                if (!res.Found) return;
 
                 for (int i = 0; i < res.Tiles.GetLength(0); i++)
                 {
@@ -63,12 +66,14 @@ namespace Spongbob.ViewModels
                     );
 
                 SideBar.Result = res;
+                Result.Found = true;
             }, this.WhenAnyValue(x => x.SideBar.CanSearch));
 
             SideBar.RaisePropertyChanged(nameof(SideBar.Search));
 
             SideBar.Reset = ReactiveCommand.Create(() =>
             {
+                Result.Found = true;
                 if (cancellation != null)
                 {
                     cancellation.Cancel();

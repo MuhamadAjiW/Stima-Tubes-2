@@ -76,6 +76,7 @@ namespace Spongbob.Models
                 }catch{
                     watch.Stop();
                     res.Time = watch.ElapsedMilliseconds;
+                    res.Found = false;
                     return res;
                 }
 

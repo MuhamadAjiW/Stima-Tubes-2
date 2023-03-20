@@ -14,6 +14,8 @@ namespace Spongbob.Models
         public int Steps { get => Route.Count; }
         public long Time { get; set; }
 
+        public bool Found { get; set; } = true;
+
         public Result(int width, int height) {
             Tiles = new int[height, width];
         }

@@ -67,6 +67,7 @@
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   Foreground="{StaticResource PrimaryPink}"/>
 				<TextBlock Text="{Binding Result.NodesCount}"
+						   IsVisible="{Binding Result.Found}"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   Foreground="{StaticResource PrimaryPink}"/>
@@ -75,6 +76,7 @@
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   Foreground="{StaticResource PrimaryPink}"/>
 				<TextBlock Text="{Binding Result.Steps}"
+						   IsVisible="{Binding Result.Found}"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   Foreground="{StaticResource PrimaryPink}"/>
