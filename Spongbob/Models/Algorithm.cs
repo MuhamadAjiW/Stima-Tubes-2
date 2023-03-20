@@ -19,7 +19,7 @@ namespace Spongbob.Models
         protected bool isTSPDone = false;
         protected List<Tuple<int, int>> nonTSPRoute = new();
 
-        public delegate void Callback(Tuple<string, Graph, Graph> step);
+        public delegate void Callback(Tuple<string, Graph, Graph, bool> step);
 
         public bool IsDone { get => isTSP ? isTSPDone : isTreasureDone; }
         public bool IsBack { get => isTSP && !isTSPDone && isTreasureDone; }
@@ -99,11 +99,11 @@ namespace Spongbob.Models
             }
         }
 
-        public abstract string Next(string previous);
+        public abstract Tuple<string, bool> Next(string previous);
 
         public abstract Result JustRun();
 
-        public abstract Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile);
+        public abstract Tuple<String, Graph, Graph, bool> RunAndVisualize(string previous, Graph previousTile);
 
         public abstract Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation);
 

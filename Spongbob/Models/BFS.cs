@@ -38,6 +38,8 @@ namespace Spongbob.Models
             watch.Start();
 
             initialize();
+            Tuple<string, bool> step = Next(id);
+            id = step.Item1;
 
             while (!IsDone)
             {
@@ -69,13 +71,20 @@ namespace Spongbob.Models
                 
                 if (!isTreasureDone && graphsprio2.TryPeek(out var graph2))
                     lastTreasure = graph2.Item2;
+                try{
+                    step = Next(IsBack ? backId : id);
+                }catch{
+                    watch.Stop();
+                    res.Time = watch.ElapsedMilliseconds;
+                    return res;
+                }
 
                 if (IsBack)
-                {
-                    backId = Next(backId);
-                }
-                else id = Next(id);
-                res.NodesCount++;
+                    backId = step.Item1;
+                else id = step.Item1;
+
+                if (step.Item2)
+                    res.NodesCount++;
             }
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;
@@ -97,7 +106,7 @@ namespace Spongbob.Models
             return res;
         }
 
-        public override string Next(string previous)
+        public override Tuple<string, bool> Next(string previous)
         {
             int loc = 1;
             graphsprio1.TryPeek(out var el);
@@ -129,10 +138,10 @@ namespace Spongbob.Models
 
             
             if(!id.StartsWith(previous)){
-                return previous.Substring(0, previous.Length - 1);
+                return new Tuple<string, bool>(previous.Substring(0, previous.Length - 1), false);
             }
             if(id.Length > previous.Length + 1){
-                return id.Substring(0, previous.Length + 1);
+                return new Tuple<string, bool>(id.Substring(0, previous.Length + 1), false);
             }
             
             
@@ -177,7 +186,7 @@ namespace Spongbob.Models
                         graphsprio2.Clear();   
                         graphsprio1.Enqueue(new Tuple<string, Graph>(id, tile));
                     }
-                    return id;
+                    return new Tuple<string, bool>(id, false);
                 }
 
 
@@ -185,7 +194,7 @@ namespace Spongbob.Models
             else if (IsBack && tile == map.Start)
             {
                 isTSPDone = true;
-                return id;
+                return new Tuple<string, bool>(id, true);
             }
 
             List<Tuple<Graph?, int>> neighborsData = new();
@@ -235,7 +244,7 @@ namespace Spongbob.Models
             
             AddToQueue(graphsprio1, neighborsData, id, neighborsCount);
             
-            return id;
+            return new Tuple<string, bool>(id, true);
         }
 
         static void AddToQueue(Queue<Tuple<string, Graph>> q, List<Tuple<Graph?, int>> neighborsData, string id, int count)
@@ -248,7 +257,7 @@ namespace Spongbob.Models
             }
         }
 
-        public override Tuple<String, Graph, Graph> RunAndVisualize(string previous, Graph previousTile)
+        public override Tuple<String, Graph, Graph, bool> RunAndVisualize(string previous, Graph previousTile)
         {
             int loc = 1;
             graphsprio1.TryPeek(out var el);
@@ -295,7 +304,7 @@ namespace Spongbob.Models
                 if (!nonTSPRoute.Contains(previousTile.Pos))
                     previousTile.TileView = TileView.BackTracked;
 
-                return new Tuple<string, Graph, Graph>(previous.Substring(0, previous.Length - 1), tile, previousTile);
+                return new Tuple<string, Graph, Graph, bool>(previous.Substring(0, previous.Length - 1), tile, previousTile, false);
             }
             if(id.Length > previous.Length + 1){
                 previousTile.TileView = TileView.Visited;
@@ -310,7 +319,7 @@ namespace Spongbob.Models
                     tile.states = TileState.Visited;
                 }
 
-                return new Tuple<string, Graph, Graph>(id.Substring(0, previous.Length + 1), tile, previousTile);
+                return new Tuple<string, Graph, Graph, bool>(id.Substring(0, previous.Length + 1), tile, previousTile, false);
             }
             
             switch (loc){    
@@ -353,7 +362,7 @@ namespace Spongbob.Models
                         graphsprio2.Clear();   
                         graphsprio1.Enqueue(new Tuple<string, Graph>(id, tile));
                     }
-                    return new Tuple<string, Graph, Graph>(id, tile, previousTile);
+                    return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, false);
                 }
 
 
@@ -361,7 +370,7 @@ namespace Spongbob.Models
             else if (IsBack && tile == map.Start)
             {
                 isTSPDone = true;
-                return new Tuple<string, Graph, Graph>(id, tile, previousTile);
+                return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, true);
             }
 
             List<Tuple<Graph?, int>> neighborsData = new();
@@ -395,12 +404,13 @@ namespace Spongbob.Models
             
             AddToQueue(graphsprio1, neighborsData, id, neighborsCount);
             
-            return new Tuple<string, Graph, Graph>(id, tile, previousTile);
+            return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, false);
         }
 
         public override async Task RunProper(Callback callback, Func<int> getDelay,
             CancellationTokenSource cancellation)
         {
+            bool success = true;
 
             Result res = new(map.Width, map.Height);
             string id = "";
@@ -410,6 +420,9 @@ namespace Spongbob.Models
 
             initialize();
             Graph position = map.Start;
+            Tuple<string, Graph, Graph, bool> step = RunAndVisualize(id, position);
+            id = step.Item1;
+
 
             while (!IsDone)
             {
@@ -454,43 +467,48 @@ namespace Spongbob.Models
                     lastTreasure = graph2.Item2;
 
 
-                Tuple<string, Graph, Graph> step;
-                if (IsBack)
-                {
-                    step = RunAndVisualize(backId, position);
-                    backId = step.Item1;
+                try{
+                    step = RunAndVisualize(IsBack ? backId : id, position);
+                } catch{
+                    success = false;
+                    break;
                 }
-                else
-                {
-                    step = RunAndVisualize(id, position);
-                    id = step.Item1;
 
+                if (IsBack)
+                    backId = step.Item1;
+                else{
+                    id = step.Item1;
                     if (!isTreasureDone) backId = id;
-                }
+                };
 
                 position = step.Item2;
+
+                if (step.Item4)
+                    res.NodesCount++;
+
                 callback(step);
                 await Task.Delay(getDelay());
             }
-
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;
+            
+            if(success){
+                if (isTSP)
+                    GetResult(res, backId);
+                else
+                    GetResult(res, id);
 
-            if (isTSP)
-                GetResult(res, backId);
-            else
-                GetResult(res, id);
+                //print result
+                Console.WriteLine("Result: ");
+                Console.WriteLine("Time: " + res.Time + "ms");
+                Console.WriteLine("Nodes: " + res.NodesCount);
+                for (int i = 0; i < res.Route.Count(); i++)
+                {
+                    Console.Write(res.Route.ElementAt(i) + " ");
+                }
 
-            //print result
-            Console.WriteLine("Result: ");
-            Console.WriteLine("Time: " + res.Time + "ms");
-            Console.WriteLine("Nodes: " + res.NodesCount);
-            for (int i = 0; i < res.Route.Count(); i++)
-            {
-                Console.Write(res.Route.ElementAt(i) + " ");
+                Console.Write("\n");
             }
-
-            Console.Write("\n");
         }
     }
 }
