@@ -61,7 +61,7 @@
 						   FontSize="14"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
 						   TextWrapping="Wrap"
-						   Foreground="{StaticResource PrimaryPink}"/>
+						   Foreground="White"/>
 				<TextBlock Text="Node"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
@@ -70,7 +70,7 @@
 						   IsVisible="{Binding Result.Found}"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
-						   Foreground="{StaticResource PrimaryPink}"/>
+						   Foreground="White"/>
 				<TextBlock Text="Steps"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
@@ -79,7 +79,7 @@
 						   IsVisible="{Binding Result.Found}"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
-						   Foreground="{StaticResource PrimaryPink}"/>
+						   Foreground="White"/>
 				<TextBlock Text="Time"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
@@ -87,7 +87,7 @@
 				<TextBlock Text="{Binding Result.Time, StringFormat='{}{0} ms'}"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
-						   Foreground="{StaticResource PrimaryPink}"/>
+						   Foreground="White"/>
 				<TextBlock Text="Speed"
 						   FontSize="24"
 						   FontWeight="SemiBold" HorizontalAlignment="Center"
