@@ -140,6 +140,7 @@ namespace Spongbob.ViewModels
                 Graph before = step.Item3;
 
                 GetTile(now.Pos.Item2, now.Pos.Item1).State = TileState.CURRENT;
+                if (now == before) return;
                 switch (before.TileView)
                 {
                     case Models.TileView.Visited:

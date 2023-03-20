@@ -92,6 +92,7 @@ namespace Spongbob.ViewModels
                     Debug.WriteLine("test");
                     if (file != null)
                     {
+                        Result.Map = null;
                         try
                         {
                             Result.Map = parser.ParseFile(file);

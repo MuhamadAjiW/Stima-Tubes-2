@@ -13,7 +13,7 @@
 			<Setter Property="Background" Value="White"/>
 		</Style>
 		<Style Selector="Panel.void">
-			<Setter Property="Background" Value="Black"/>
+			<Setter Property="Background" Value="Transparent"/>
 		</Style>
 		<Style Selector="Panel.treasure">
 			<Setter Property="Background" Value="Yellow"/>
@@ -22,13 +22,13 @@
 			<Setter Property="Background" Value="LawnGreen"/>
 		</Style>
 		<Style Selector="Panel.visited">
-			<Setter Property="Background" Value="Cyan"/>
+			<Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
 		</Style>
 		<Style Selector="Panel.backtracked">
-			<Setter Property="Background" Value="Red"/>
+			<Setter Property="Background" Value="{StaticResource Primary}"/>
 		</Style>
 		<Style Selector="Panel.current">
-			<Setter Property="Background" Value="Beige"/>
+			<Setter Property="Background" Value="{StaticResource PrimaryPink}"/>
 		</Style>
 	</UserControl.Styles>
 	<Panel
@@ -40,6 +40,8 @@
 		   Classes.current="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
 		   >
 		<Image IsVisible="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
-			   Source="avares://Spongbob/Assets/patrick.png"/>
+			   Source="avares://Spongbob/Assets/crabs.png"/>
+		<Image IsVisible="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"
+			   Source="avares://Spongbob/Assets/Treasure.png"/>
 	</Panel>
 </UserControl>
