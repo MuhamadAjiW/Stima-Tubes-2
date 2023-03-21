@@ -32,7 +32,6 @@ namespace Spongbob.Models
         {
             Result res = new(map.Width, map.Height);
             string id = "";
-            string backId = "";
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
@@ -42,9 +41,7 @@ namespace Spongbob.Models
 
             while (!IsDone)
             {
-                if(!IsBack)
-                    Console.WriteLine("Current id: " + id);
-                else Console.WriteLine("Current id: " + backId);
+                Console.WriteLine("Current id: " + id);
                 
                 Console.Write("graphsprio1: ");
                 for(int i = 0; i < graphsprio1.Count(); i++){
@@ -72,7 +69,7 @@ namespace Spongbob.Models
                     lastTreasure = graph2.Item2;
 
                 try{
-                    step = Next(IsBack ? backId : id);
+                    step = Next(id);
                 }catch{
                     watch.Stop();
                     res.Time = watch.ElapsedMilliseconds;
@@ -80,9 +77,7 @@ namespace Spongbob.Models
                     return res;
                 }
 
-                if (IsBack)
-                    backId = step.Item1;
-                else id = step.Item1;
+                id = step.Item1;
 
                 if (step.Item2)
                     res.NodesCount++;
@@ -90,10 +85,7 @@ namespace Spongbob.Models
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;
 
-            if (isTSP) 
-                GetResult(res, backId);
-            else
-                GetResult(res, id);
+            GetResult(res, id);
            
             //print result
             Console.WriteLine("Result: ");
@@ -163,6 +155,11 @@ namespace Spongbob.Models
             {
                 Console.WriteLine("Treasure found: " + id + "\n");
                 
+                for(int i = 0; i < graphsprio2.Count(); i++){
+                    graphsprio2.TryPop(out var duplicate);
+                    graphsprio2.Push(refactorRoute(duplicate, id));
+                }
+
                 for(int i = graphsprio1.Count()-1; i >= 0; i--){
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -340,6 +337,11 @@ namespace Spongbob.Models
                 GetNonTSPRoute(id);
                 Console.WriteLine("Treasure found: " + id + "\n");
                 
+                for(int i = 0; i < graphsprio2.Count(); i++){
+                    graphsprio2.TryPop(out var duplicate);
+                    graphsprio2.Push(refactorRoute(duplicate, id));
+                }
+
                 for(int i = graphsprio1.Count()-1; i >= 0; i--){
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -426,7 +428,6 @@ namespace Spongbob.Models
 
             Result res = new(map.Width, map.Height);
             string id = "";
-            string backId = "";
             var watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
@@ -442,9 +443,7 @@ namespace Spongbob.Models
                     return;
                 }
 
-                if (!IsBack)
-                    Console.WriteLine("Current id: " + id);
-                else Console.WriteLine("Current id: " + backId);
+                Console.WriteLine("Current id: " + id);
 
                 Console.Write("graphsprio1: ");
                 for (int i = 0; i < graphsprio1.Count(); i++){
@@ -475,18 +474,14 @@ namespace Spongbob.Models
                     lastTreasure = graph2.Item2;
 
                 try{
-                    step = RunAndVisualize(IsBack ? backId : id, position);
+                    step = RunAndVisualize(id, position);
                 } catch{
                     success = false;
                     break;
                 }
 
-                if (IsBack)
-                    backId = step.Item1;
-                else{
-                    id = step.Item1;
-                    if (!isTreasureDone) backId = id;
-                };
+                
+                id = step.Item1;
 
                 position = step.Item2;
 
@@ -500,10 +495,7 @@ namespace Spongbob.Models
             res.Time = watch.ElapsedMilliseconds;
             
             if(success){
-                if (isTSP)
-                    GetResult(res, backId);
-                else
-                    GetResult(res, id);
+                GetResult(res, id);
 
                 //print result
                 Console.WriteLine("Result: ");
