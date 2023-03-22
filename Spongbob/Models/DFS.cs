@@ -359,7 +359,7 @@ namespace Spongbob.Models
                 for (int i = 0; i < len1; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
-                    graphsprio2.Push(refactorRoute(duplicate!, id));
+                    graphsprio1.Push(refactorRoute(duplicate!, id));
                 }
                 for (int i = 0; i < len1; i++)
                 {
