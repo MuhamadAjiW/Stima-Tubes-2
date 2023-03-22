@@ -72,15 +72,14 @@ namespace Spongbob.Models
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
-                graphsprio2.TryPeek(out el);
-                for (int i = graphsprio2.Count() - 1; i >= 0; i--)
+                int n = graphsprio2.Count();
+                for (int i = n - 1; i >= 0; i--)
                 {
                     graphsprio1.Push(graphsprio2.ElementAt(i));
                 }
                 graphsprio2.Clear();
-
                 graphsprio1.TryPeek(out el);
-
+                
                 if (el == null)
                 {
                     loc = 2;
@@ -90,6 +89,20 @@ namespace Spongbob.Models
             if (el == null)
             {
                 throw new Exception("No solution");
+            }
+
+            if (IsBack ? el.Item2.backStates == TileState.Visited : el.Item2.states == TileState.Visited)
+            {
+                switch (loc)
+                {
+                    case 1:
+                        graphsprio1.TryPop(out el);
+                        break;
+                    case 2:
+                        stucks.TryPop(out el);
+                        break;
+                }
+                return Next(previous);
             }
 
             string id = el.Item1;
@@ -169,8 +182,6 @@ namespace Spongbob.Models
                 Graph? candidate = tile.Neighbors[i];
                 if (candidate == null) continue;
                 if (IsBack && candidate?.backStates == TileState.Visited) continue;
-                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
-                if (graphsprio2.Any(s => s.Item2 == candidate)) continue;
                 if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
                 if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
@@ -215,14 +226,14 @@ namespace Spongbob.Models
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
-                graphsprio2.TryPeek(out el);
-                for (int i = graphsprio2.Count() - 1; i >= 0; i--)
+                int n = graphsprio2.Count();
+                for (int i = n - 1; i >= 0; i--)
                 {
                     graphsprio1.Push(graphsprio2.ElementAt(i));
                 }
                 graphsprio2.Clear();
-
                 graphsprio1.TryPeek(out el);
+
 
                 if (el == null)
                 {
@@ -233,6 +244,20 @@ namespace Spongbob.Models
             if (el == null)
             {
                 throw new Exception("No solution");
+            }
+
+            if (IsBack ? el.Item2.backStates == TileState.Visited : el.Item2.states == TileState.Visited)
+            {
+                switch (loc)
+                {
+                    case 1:
+                        graphsprio1.TryPop(out el);
+                        break;
+                    case 2:
+                        stucks.TryPop(out el);
+                        break;
+                }
+                return RunAndVisualize(previous, previousTile);
             }
 
             string id = el.Item1;
@@ -345,8 +370,6 @@ namespace Spongbob.Models
                 Graph? candidate = tile.Neighbors[i];
                 if (candidate == null) continue;
                 if (IsBack && candidate?.backStates == TileState.Visited) continue;
-                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
-                if (graphsprio2.Any(s => s.Item2 == candidate)) continue;
                 if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
                 if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
