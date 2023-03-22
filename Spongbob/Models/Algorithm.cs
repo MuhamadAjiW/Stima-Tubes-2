@@ -30,19 +30,6 @@ namespace Spongbob.Models
             this.isTSP = isTSP;
         }
 
-        /*
-        public int GetTreasureCount(string id)
-        {
-            int count = 0;
-            for (int i = 1; i <= id.Length; i++)
-            {
-                if (treasureCounts.TryGetValue(id.Substring(0, i), out int n))
-                    count += n;
-            }
-            return count;
-        }
-        */
-
         public void GetResult(Result res, string final)
         {
             int limit = final.Length;
