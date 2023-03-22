@@ -64,13 +64,6 @@ namespace Spongbob.Models
                 }
                 Console.Write("\n");
 
-
-                if (!isTreasureDone && graphsprio1.TryPeek(out var graph))
-                    lastTreasure = graph.Item2;
-
-                if (!isTreasureDone && graphsprio2.TryPeek(out var graph2))
-                    lastTreasure = graph2.Item2;
-
                 try
                 {
                     step = Next(id);
@@ -164,9 +157,20 @@ namespace Spongbob.Models
 
             if (!IsBack && tile.IsTreasure)
             {
-                Console.WriteLine("Treasure found: " + id + "\n");
+                int len1 = graphsprio2.Count();
+                for (int i = 0; i < len1; i++)
+                {
+                    graphsprio2.TryPop(out var duplicate);
+                    graphsprio1.Push(refactorRoute(duplicate!, id));
+                }
+                for (int i = 0; i < len1; i++)
+                {
+                    graphsprio1.TryPop(out var duplicate);
+                    graphsprio2.Push(duplicate!);
+                }
 
-                for (int i = graphsprio1.Count() - 1; i >= 0; i--)
+                int len2 = graphsprio1.Count();
+                for (int i = 0; i < len2; i++)
                 {
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -202,6 +206,7 @@ namespace Spongbob.Models
                 if (candidate == null) continue;
                 if (IsBack && candidate?.backStates == TileState.Visited) continue;
                 if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (graphsprio2.Any(s => s.Item2 == candidate)) continue;
                 if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
                 if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
@@ -350,7 +355,20 @@ namespace Spongbob.Models
                 GetNonTSPRoute(id);
                 Console.WriteLine("Treasure found: " + id + "\n");
 
-                for (int i = graphsprio1.Count() - 1; i >= 0; i--)
+                int len1 = graphsprio2.Count();
+                for (int i = 0; i < len1; i++)
+                {
+                    graphsprio2.TryPop(out var duplicate);
+                    graphsprio2.Push(refactorRoute(duplicate!, id));
+                }
+                for (int i = 0; i < len1; i++)
+                {
+                    graphsprio1.TryPop(out var duplicate);
+                    graphsprio2.Push(duplicate!);
+                }
+
+                int len2 = graphsprio1.Count();
+                for (int i = 0; i < len2; i++)
                 {
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -386,6 +404,7 @@ namespace Spongbob.Models
                 if (candidate == null) continue;
                 if (IsBack && candidate?.backStates == TileState.Visited) continue;
                 if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (graphsprio2.Any(s => s.Item2 == candidate)) continue;
                 if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
                 if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
@@ -478,13 +497,6 @@ namespace Spongbob.Models
                 }
 
                 Console.Write("\n");
-
-
-                if (!isTreasureDone && graphsprio1.TryPeek(out var graph))
-                    lastTreasure = graph.Item2;
-
-                if (!isTreasureDone && graphsprio2.TryPeek(out var graph2))
-                    lastTreasure = graph2.Item2;
 
                 try
                 {
