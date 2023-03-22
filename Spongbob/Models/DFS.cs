@@ -157,24 +157,28 @@ namespace Spongbob.Models
 
             if (!IsBack && tile.IsTreasure)
             {
+                Console.WriteLine("Treasure found: " + id + "\n");
+
                 int len1 = graphsprio2.Count();
+                int len2 = graphsprio1.Count();
+
                 for (int i = 0; i < len1; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
-                    graphsprio1.Push(refactorRoute(duplicate!, id));
-                }
-                for (int i = 0; i < len1; i++)
-                {
-                    graphsprio1.TryPop(out var duplicate);
-                    graphsprio2.Push(duplicate!);
+                    stucks.Push(refactorRoute(duplicate!, id));
                 }
 
-                int len2 = graphsprio1.Count();
-                for (int i = 0; i < len2; i++)
+                for (int i = len2 - 1; i >= 0; i--)
                 {
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
                 graphsprio1.Clear();
+
+                for (int i = 0; i < len1; i++)
+                {
+                    stucks.TryPop(out var duplicate);
+                    graphsprio2.Push(duplicate!);
+                }
 
                 treasureCounts++;
 
@@ -356,23 +360,25 @@ namespace Spongbob.Models
                 Console.WriteLine("Treasure found: " + id + "\n");
 
                 int len1 = graphsprio2.Count();
+                int len2 = graphsprio1.Count();
+
                 for (int i = 0; i < len1; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
-                    graphsprio1.Push(refactorRoute(duplicate!, id));
-                }
-                for (int i = 0; i < len1; i++)
-                {
-                    graphsprio1.TryPop(out var duplicate);
-                    graphsprio2.Push(duplicate!);
+                    stucks.Push(refactorRoute(duplicate!, id));
                 }
 
-                int len2 = graphsprio1.Count();
-                for (int i = 0; i < len2; i++)
+                for (int i = len2 - 1; i >= 0; i--)
                 {
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
                 graphsprio1.Clear();
+
+                for (int i = 0; i < len1; i++)
+                {
+                    stucks.TryPop(out var duplicate);
+                    graphsprio2.Push(duplicate!);
+                }
 
                 treasureCounts++;
 
