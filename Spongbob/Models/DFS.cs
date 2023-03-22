@@ -189,7 +189,7 @@ namespace Spongbob.Models
                         graphsprio2.Clear();
                         graphsprio1.Push(new Tuple<string, Graph>(id, tile));
                     }
-                    return new Tuple<string, bool>(id, false);
+                    return new Tuple<string, bool>(id, true);
                 }
 
             }
@@ -387,7 +387,7 @@ namespace Spongbob.Models
                         graphsprio2.Clear();
                         graphsprio1.Push(new Tuple<string, Graph>(id, tile));
                     }
-                    return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, false);
+                    return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, true);
                 }
 
             }
