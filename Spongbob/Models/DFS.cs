@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Spongbob.Models
 {
@@ -31,10 +27,14 @@ namespace Spongbob.Models
 
         public override Tuple<string, bool> Next(string previous)
         {
+            // Check next destination from stack
+
             int loc = 1;
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
+                // If first priority stack is empty, move second priority stack into the first one then check from the first one
+
                 int n = graphsprio2.Count();
                 for (int i = n - 1; i >= 0; i--)
                 {
@@ -45,17 +45,23 @@ namespace Spongbob.Models
 
                 if (el == null)
                 {
+                    // If second stack is empty, check from stucks
+
                     loc = 2;
                     stucks.TryPeek(out el);
                 }
             }
             if (el == null)
             {
+                // If stucks is empty, no next destination
+
                 throw new Exception("No solution");
             }
 
             if (IsBack ? el.Item2.BackStates == TileState.Visited : el.Item2.States == TileState.Visited)
             {
+                // If next destination has been visited, remove destination from stack without doing anything
+
                 switch (loc)
                 {
                     case 1:
@@ -70,6 +76,7 @@ namespace Spongbob.Models
 
             string id = el.Item1;
 
+            // If next destination is not within one step, do some backtracking
             if (!id.StartsWith(previous))
             {
                 return new Tuple<string, bool>(previous.Substring(0, previous.Length - 1), false);
@@ -79,6 +86,7 @@ namespace Spongbob.Models
                 return new Tuple<string, bool>(id.Substring(0, previous.Length + 1), false);
             }
 
+            // Pop tile if everything else is valid
             switch (loc)
             {
                 case 1:
@@ -91,28 +99,31 @@ namespace Spongbob.Models
 
             Graph tile = el!.Item2;
 
+            // Turn visited flags on for next tile
             if (IsBack)
                 tile.BackStates = TileState.Visited;
             else tile.States = TileState.Visited;
 
             if (!IsBack && tile.IsTreasure)
             {
-                int len1 = graphsprio2.Count();
-                int len2 = graphsprio1.Count();
+                int len1 = graphsprio1.Count();
+                int len2 = graphsprio2.Count();
 
-                for (int i = 0; i < len1; i++)
+                // If next tile contains a treasure, refactor all routes to include backtracking steps from the treasure tile
+                // Two steps so it does not turn upside down
+                for (int i = 0; i < len2; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
                     stucks.Push(RefactorRoute(duplicate!, id));
                 }
-
-                for (int i = 0; i < len1; i++)
+                for (int i = 0; i < len2; i++)
                 {
                     stucks.TryPop(out var duplicate);
                     graphsprio2.Push(duplicate!);
                 }
 
-                for (int i = len2 - 1; i >= 0; i--)
+                // Move first priority stack into the second one to prioritize routesnimize backtracking
+                for (int i = len1 - 1; i >= 0; i--)
                 {
                     graphsprio2.Push(RefactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -122,9 +133,11 @@ namespace Spongbob.Models
 
                 if (treasureCounts == map.TreasuresCount)
                 {
+                    // Every Treasure has been found, mark the algorithm as done
                     isTreasureDone = true;
                     if (isTSP)
                     {
+                        // If TSP is required, clear every stack and restart the algorithm with start tile as the goal
                         graphsprio1.Clear();
                         graphsprio2.Clear();
                         graphsprio1.Push(new Tuple<string, Graph>(id, tile));
@@ -135,10 +148,13 @@ namespace Spongbob.Models
             }
             else if (IsBack && tile == map.Start)
             {
+                // Start found, mark the algorithm as done
                 isTSPDone = true;
                 return new Tuple<string, bool>(id, true);
             }
 
+            // Add non null neighbors to the stack
+            // If TSP, skip visited tiles to prioritize routes with minimal backtracking
             List<Tuple<Graph?, int>> neighborsData = new();
             for (int i = tile.Neighbors.Length - 1; i >= 0; i--)
             {
@@ -153,6 +169,7 @@ namespace Spongbob.Models
 
             if (IsBack)
             {
+                // If TSP, load visited tiles to lower priority stack to prioritize routes with minimal backtracking
                 List<Tuple<Graph?, int>> neighborsStuckData = new();
                 for (int i = tile.Neighbors.Length - 1; i >= 0; i--)
                 {
@@ -185,10 +202,14 @@ namespace Spongbob.Models
 
         public override Tuple<String, Graph, Graph, bool> NextVisualize(string previous, Graph previousTile)
         {
+            // Check next destination from stack
+
             int loc = 1;
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
+                // If first priority stack is empty, move second priority stack into the first one then check from the first one
+
                 int n = graphsprio2.Count();
                 for (int i = n - 1; i >= 0; i--)
                 {
@@ -200,17 +221,23 @@ namespace Spongbob.Models
 
                 if (el == null)
                 {
+                    // If second stack is empty, check from stucks
+
                     loc = 2;
                     stucks.TryPeek(out el);
                 }
             }
             if (el == null)
             {
+                // If stucks is empty, no next destination
+
                 throw new Exception("No solution");
             }
 
             if (IsBack ? el.Item2.BackStates == TileState.Visited : el.Item2.States == TileState.Visited)
             {
+                // If next destination has been visited, remove destination from stack without doing anything
+                
                 switch (loc)
                 {
                     case 1:
@@ -226,6 +253,7 @@ namespace Spongbob.Models
             string id = el.Item1;
             Graph tile;
 
+            // If next destination is not within one step, do some backtracking
             if (!id.StartsWith(previous) && id != previous)
             {
                 tile = GetGraphStep(previous[previous.Length - 1], previousTile, true);
@@ -239,6 +267,7 @@ namespace Spongbob.Models
                     tile.States = TileState.Visited;
                 }
 
+                // Visualize backtrack only if route is not required for the whole solution
                 if (!nonTSPRoute.Contains(previousTile.Pos))
                     previousTile.TileView = TileView.BackTracked;
 
@@ -261,7 +290,7 @@ namespace Spongbob.Models
                 return new Tuple<string, Graph, Graph, bool>(id.Substring(0, previous.Length + 1), tile, previousTile, false);
             }
 
-
+            // Pop tile if everything else is valid
             switch (loc)
             {
                 case 1:
@@ -274,7 +303,8 @@ namespace Spongbob.Models
 
             tile = el!.Item2;
 
-
+            // Turn visited flags on for next tile
+            // Visualize tile as visited
             previousTile.TileView = TileView.Visited;
             tile.TileView = TileView.Visited;
             if (IsBack)
@@ -283,23 +313,27 @@ namespace Spongbob.Models
 
             if (!IsBack && tile.IsTreasure)
             {
-                SetNonTSPRoute(id);
-
                 int len1 = graphsprio2.Count();
                 int len2 = graphsprio1.Count();
 
+                // If next tile contains a treasure
+                // Set previous tiles as required for the visualizer
+                SetNonTSPRoute(id);
+
+                // Refactor all routes to include backtracking steps from the treasure tile
+                // Two steps so it does not turn upside down
                 for (int i = 0; i < len1; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
                     stucks.Push(RefactorRoute(duplicate!, id));
                 }
-
                 for (int i = 0; i < len1; i++)
                 {
                     stucks.TryPop(out var duplicate);
                     graphsprio2.Push(duplicate!);
                 }
 
+                // Move first priority stack into the second one to prioritize routesnimize backtracking
                 for (int i = len2 - 1; i >= 0; i--)
                 {
                     graphsprio2.Push(RefactorRoute(graphsprio1.ElementAt(i), id));
@@ -310,9 +344,11 @@ namespace Spongbob.Models
 
                 if (treasureCounts == map.TreasuresCount)
                 {
+                    // Every Treasure has been found, mark the algorithm as done
                     isTreasureDone = true;
                     if (isTSP)
                     {
+                        // If TSP is required, clear every stack and restart the algorithm with start tile as the goal
                         graphsprio1.Clear();
                         graphsprio2.Clear();
                         graphsprio1.Push(new Tuple<string, Graph>(id, tile));
@@ -323,10 +359,13 @@ namespace Spongbob.Models
             }
             else if (IsBack && tile == map.Start)
             {
+                // Start found, mark the algorithm as done
                 isTSPDone = true;
                 return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, true);
             }
 
+            // Add non null neighbors to the stack
+            // If TSP, skip visited tiles to prioritize routes with minimal backtracking
             List<Tuple<Graph?, int>> neighborsData = new();
             for (int i = tile.Neighbors.Length - 1; i >= 0; i--)
             {
@@ -341,6 +380,7 @@ namespace Spongbob.Models
 
             if (IsBack)
             {
+                // If TSP, load visited tiles to lower priority stack to prioritize routes with minimal backtracking
                 List<Tuple<Graph?, int>> neighborsStuckData = new();
                 for (int i = tile.Neighbors.Length - 1; i >= 0; i--)
                 {

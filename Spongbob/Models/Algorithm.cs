@@ -13,7 +13,7 @@ namespace Spongbob.Models
         protected int treasureCounts = 0;
         protected bool isTreasureDone = false;
         protected bool isTSPDone = false;
-        protected List<Tuple<int, int>> nonTSPRoute = new();
+        protected HashSet<Tuple<int, int>> nonTSPRoute = new();
 
         public delegate void StepCallback(Tuple<string, Graph, Graph, bool> step);
         public delegate void RerunResultCallback(Graph prev, Graph now);
