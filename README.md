@@ -1,11 +1,14 @@
 # Maze Solver With BFS and DFS Algorithm
 ## Table of Contents
-* [General Info](#general-information)
-* [Structure](#structure)
-* [Dependencies](#dependencies)
-* [Setup](#installation)
-* [Usage](#program-execution)
-* [Acknowledgements](#acknowledgements)
+- [Maze Solver With BFS and DFS Algorithm](#maze-solver-with-bfs-and-dfs-algorithm)
+  - [Table of Contents](#table-of-contents)
+  - [General Information](#general-information)
+  - [Structure](#structure)
+  - [How to Use](#how-to-use)
+    - [Dependencies](#dependencies)
+    - [Installation](#installation)
+    - [Program Execution](#program-execution)
+  - [Acknowledgements](#acknowledgements)
 
 ## General Information
 This project is the 2nd project for algorithm strategy course in Bandung Institute of Technologi. In this project we were assigned to make a maze solver using breadth first search (BFS) and depth first search (DFS) algorithm implemented in C#. The maze is represented by a 2D array of char. The maze is solved by finding all  the treasure on the map. The start point is represented by K and the treasure is represented by T. The path is represented by R and the wall is represented by X. The program will output the path from the start point to all the treasure. The program will also output the number of nodes that are visited by the algorithm.
@@ -89,11 +92,12 @@ dotnet build
 ```
 
 ### Program Execution
-1. (windows) Run Spongebob.exe in bin/Release/net6.0-windows
-2. Choose desired map from test folder or anywhere in your device
-3. Pick the configuration for BFS or DFS and TSP or Non-TSP
-4. Press search or visualize button
-5. Enjoy ^ ^
+1. (windows) Run Spongbob.exe in bin/Release/net6.0-windows
+2. (mac) Run Spongbob in bin/Release/net6.0-mac
+3. Choose desired map from test folder or anywhere in your device
+4. Pick the configuration for BFS or DFS and TSP or Non-TSP
+5. Press search or visualize button
+6. Enjoy ^ ^
 
 ## Acknowledgements
 - Bandung Institute of Technology, Informatics Engineering
