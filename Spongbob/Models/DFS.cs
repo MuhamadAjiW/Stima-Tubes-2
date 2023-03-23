@@ -439,7 +439,7 @@ namespace Spongbob.Models
                     res.NodesCount++;
 
                 callback(step);
-                await Task.Delay(getDelay(), cancellation.Token);
+                await Task.Delay(getDelay());
             }
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;
