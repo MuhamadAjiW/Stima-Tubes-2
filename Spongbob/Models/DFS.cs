@@ -41,6 +41,29 @@ namespace Spongbob.Models
 
             while (!IsDone)
             {
+                Console.WriteLine("Current id: " + id);
+
+                Console.Write("graphsprio1: ");
+                for (int i = 0; i < graphsprio1.Count(); i++)
+                {
+                    Console.Write(graphsprio1.ElementAt(i).Item1 + " ");
+                }
+                Console.Write("\n");
+
+                Console.Write("graphsprio2: ");
+                for (int i = 0; i < graphsprio2.Count(); i++)
+                {
+                    Console.Write(graphsprio2.ElementAt(i).Item1 + " ");
+                }
+                Console.Write("\n");
+
+                Console.Write("stucks: ");
+                for (int i = 0; i < stucks.Count(); i++)
+                {
+                    Console.Write(stucks.ElementAt(i).Item1 + " ");
+                }
+                Console.Write("\n");
+
                 try
                 {
                     step = Next(id);
@@ -63,6 +86,16 @@ namespace Spongbob.Models
 
             GetResult(res, id);
 
+            //print result
+            Console.WriteLine("Result: ");
+            Console.WriteLine("Time: " + res.Time + "ms");
+            Console.WriteLine("Nodes: " + res.NodesCount);
+            for (int i = 0; i < res.Route.Count(); i++)
+            {
+                Console.Write(res.Route.ElementAt(i) + " ");
+            }
+            Console.Write("\n");
+
             return res;
         }
 
@@ -72,14 +105,15 @@ namespace Spongbob.Models
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
-                int n = graphsprio2.Count();
-                for (int i = n - 1; i >= 0; i--)
+                graphsprio2.TryPeek(out el);
+                for (int i = graphsprio2.Count() - 1; i >= 0; i--)
                 {
                     graphsprio1.Push(graphsprio2.ElementAt(i));
                 }
                 graphsprio2.Clear();
+
                 graphsprio1.TryPeek(out el);
-                
+
                 if (el == null)
                 {
                     loc = 2;
@@ -91,21 +125,10 @@ namespace Spongbob.Models
                 throw new Exception("No solution");
             }
 
-            if (IsBack ? el.Item2.backStates == TileState.Visited : el.Item2.states == TileState.Visited)
-            {
-                switch (loc)
-                {
-                    case 1:
-                        graphsprio1.TryPop(out el);
-                        break;
-                    case 2:
-                        stucks.TryPop(out el);
-                        break;
-                }
-                return Next(previous);
-            }
-
             string id = el.Item1;
+
+            Console.WriteLine("next: " + id + "\n");
+            Console.Write("\n");
 
             if (!id.StartsWith(previous))
             {
@@ -135,21 +158,19 @@ namespace Spongbob.Models
             if (!IsBack && tile.IsTreasure)
             {
                 int len1 = graphsprio2.Count();
-                int len2 = graphsprio1.Count();
-
                 for (int i = 0; i < len1; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
-                    stucks.Push(refactorRoute(duplicate!, id));
+                    graphsprio1.Push(refactorRoute(duplicate!, id));
                 }
-
                 for (int i = 0; i < len1; i++)
                 {
-                    stucks.TryPop(out var duplicate);
+                    graphsprio1.TryPop(out var duplicate);
                     graphsprio2.Push(duplicate!);
                 }
 
-                for (int i = len2 - 1; i >= 0; i--)
+                int len2 = graphsprio1.Count();
+                for (int i = 0; i < len2; i++)
                 {
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -160,13 +181,15 @@ namespace Spongbob.Models
                 if (treasureCounts == map.TreasuresCount)
                 {
                     isTreasureDone = true;
+                    Console.WriteLine("Done!");
                     if (isTSP)
                     {
+                        Console.WriteLine("Starting TSP\n");
                         graphsprio1.Clear();
                         graphsprio2.Clear();
                         graphsprio1.Push(new Tuple<string, Graph>(id, tile));
                     }
-                    return new Tuple<string, bool>(id, true);
+                    return new Tuple<string, bool>(id, false);
                 }
 
             }
@@ -182,9 +205,21 @@ namespace Spongbob.Models
                 Graph? candidate = tile.Neighbors[i];
                 if (candidate == null) continue;
                 if (IsBack && candidate?.backStates == TileState.Visited) continue;
+                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (graphsprio2.Any(s => s.Item2 == candidate)) continue;
                 if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
                 if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
+            /*
+            List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
+                if (t == null) return false;
+                if (IsBack && t.GetBackState(id)?.State == TileState.Visited) return false;
+                if (IsBack && t == map.Start) return true;
+
+                return t.GetState(id)?.State != TileState.Visited;
+
+            }).ToList();
+            */
 
             int neighborsCount = neighborsData.Count;
 
@@ -199,6 +234,13 @@ namespace Spongbob.Models
                         candidate?.states == TileState.Visited
                     ) neighborsStuckData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 }
+
+
+                // List<Graph?> neighborsStuck = tile.Neighbors.ToList().Where(t =>
+                // t != null &&
+                // t.GetBackState(id)?.State != TileState.Visited &&
+                // t.GetState(id)?.State == TileState.Visited).ToList();
+
 
                 neighborsCount += neighborsStuckData.Count;
 
@@ -226,14 +268,14 @@ namespace Spongbob.Models
             graphsprio1.TryPeek(out var el);
             if (el == null)
             {
-                int n = graphsprio2.Count();
-                for (int i = n - 1; i >= 0; i--)
+                graphsprio2.TryPeek(out el);
+                for (int i = graphsprio2.Count() - 1; i >= 0; i--)
                 {
                     graphsprio1.Push(graphsprio2.ElementAt(i));
                 }
                 graphsprio2.Clear();
-                graphsprio1.TryPeek(out el);
 
+                graphsprio1.TryPeek(out el);
 
                 if (el == null)
                 {
@@ -246,22 +288,12 @@ namespace Spongbob.Models
                 throw new Exception("No solution");
             }
 
-            if (IsBack ? el.Item2.backStates == TileState.Visited : el.Item2.states == TileState.Visited)
-            {
-                switch (loc)
-                {
-                    case 1:
-                        graphsprio1.TryPop(out el);
-                        break;
-                    case 2:
-                        stucks.TryPop(out el);
-                        break;
-                }
-                return RunAndVisualize(previous, previousTile);
-            }
-
             string id = el.Item1;
             Graph tile;
+
+            Console.WriteLine("next: " + id + "\n");
+            Console.Write("\n");
+
 
             if (!id.StartsWith(previous) && id != previous)
             {
@@ -321,23 +353,22 @@ namespace Spongbob.Models
             if (!IsBack && tile.IsTreasure)
             {
                 GetNonTSPRoute(id);
+                Console.WriteLine("Treasure found: " + id + "\n");
 
                 int len1 = graphsprio2.Count();
-                int len2 = graphsprio1.Count();
-
                 for (int i = 0; i < len1; i++)
                 {
                     graphsprio2.TryPop(out var duplicate);
-                    stucks.Push(refactorRoute(duplicate!, id));
+                    graphsprio2.Push(refactorRoute(duplicate!, id));
                 }
-
                 for (int i = 0; i < len1; i++)
                 {
-                    stucks.TryPop(out var duplicate);
+                    graphsprio1.TryPop(out var duplicate);
                     graphsprio2.Push(duplicate!);
                 }
 
-                for (int i = len2 - 1; i >= 0; i--)
+                int len2 = graphsprio1.Count();
+                for (int i = 0; i < len2; i++)
                 {
                     graphsprio2.Push(refactorRoute(graphsprio1.ElementAt(i), id));
                 }
@@ -348,13 +379,15 @@ namespace Spongbob.Models
                 if (treasureCounts == map.TreasuresCount)
                 {
                     isTreasureDone = true;
+                    Console.WriteLine("Done!");
                     if (isTSP)
                     {
+                        Console.WriteLine("Starting TSP\n");
                         graphsprio1.Clear();
                         graphsprio2.Clear();
                         graphsprio1.Push(new Tuple<string, Graph>(id, tile));
                     }
-                    return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, true);
+                    return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, false);
                 }
 
             }
@@ -370,9 +403,21 @@ namespace Spongbob.Models
                 Graph? candidate = tile.Neighbors[i];
                 if (candidate == null) continue;
                 if (IsBack && candidate?.backStates == TileState.Visited) continue;
+                if (graphsprio1.Any(s => s.Item2 == candidate)) continue;
+                if (graphsprio2.Any(s => s.Item2 == candidate)) continue;
                 if (IsBack && candidate == map.Start) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
                 if (candidate?.states != TileState.Visited) neighborsData.Add(new Tuple<Graph?, int>(candidate, i));
             }
+            /*
+            List<Graph?> neighbors = tile.Neighbors.ToList().Where(t => {
+                if (t == null) return false;
+                if (IsBack && t.GetBackState(id)?.State == TileState.Visited) return false;
+                if (IsBack && t == map.Start) return true;
+
+                return t.GetState(id)?.State != TileState.Visited;
+
+            }).ToList();
+            */
 
             int neighborsCount = neighborsData.Count;
 
@@ -388,6 +433,13 @@ namespace Spongbob.Models
                     ) neighborsStuckData.Add(new Tuple<Graph?, int>(tile.Neighbors[i], i));
                 }
 
+
+                // List<Graph?> neighborsStuck = tile.Neighbors.ToList().Where(t =>
+                // t != null &&
+                // t.GetBackState(id)?.State != TileState.Visited &&
+                // t.GetState(id)?.State == TileState.Visited).ToList();
+
+
                 neighborsCount += neighborsStuckData.Count;
 
                 AddToStack(stucks, neighborsStuckData, id, neighborsCount);
@@ -398,7 +450,7 @@ namespace Spongbob.Models
             return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, true);
         }
 
-        public override async Task RunProper(Callback callback, Func<int> getDelay,
+        public override async Task RunProper(StepCallback callback, Func<int> getDelay,
             CancellationTokenSource cancellation)
         {
             bool success = true;
@@ -419,6 +471,32 @@ namespace Spongbob.Models
                 {
                     return;
                 }
+
+                Console.WriteLine("Current id: " + id);
+
+                Console.Write("graphsprio1: ");
+                for (int i = 0; i < graphsprio1.Count(); i++)
+                {
+                    Console.Write(graphsprio1.ElementAt(i).Item1 + " ");
+                }
+
+                Console.Write("\n");
+
+                Console.Write("graphsprio2: ");
+                for (int i = 0; i < graphsprio2.Count(); i++)
+                {
+                    Console.Write(graphsprio2.ElementAt(i).Item1 + " ");
+                }
+
+                Console.Write("\n");
+
+                Console.Write("stucks: ");
+                for (int i = 0; i < stucks.Count(); i++)
+                {
+                    Console.Write(stucks.ElementAt(i).Item1 + " ");
+                }
+
+                Console.Write("\n");
 
                 try
                 {
@@ -447,6 +525,17 @@ namespace Spongbob.Models
             if (success)
             {
                 GetResult(res, id);
+
+                //print result
+                Console.WriteLine("Result: ");
+                Console.WriteLine("Time: " + res.Time + "ms");
+                Console.WriteLine("Nodes: " + res.NodesCount);
+                for (int i = 0; i < res.Route.Count(); i++)
+                {
+                    Console.Write(res.Route.ElementAt(i) + " ");
+                }
+
+                Console.Write("\n");
             }
         }
     }

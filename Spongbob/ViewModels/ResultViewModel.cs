@@ -46,13 +46,12 @@ namespace Spongbob.ViewModels
 
         public void RenderMap(PropertyValue<ResultViewModel, Map?> map)
         {
+
             if (Container == null) return;
+            Container.Children.Clear();
+            Container.ColumnDefinitions.Clear();
             if (Map == null) return;
 
-
-            Container.Children.Clear();
-
-            Container.ColumnDefinitions.Clear();
 
             var columnDefinitions = new ColumnDefinitions();
 

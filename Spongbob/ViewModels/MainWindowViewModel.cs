@@ -13,10 +13,11 @@ namespace Spongbob.ViewModels
         public SidebarViewModel SideBar { get; }
         public ResultViewModel Result { get; }
 
+        private CancellationTokenSource? cancellation;
+
         public MainWindowViewModel()
         {
             SideBar = new();
-            CancellationTokenSource? cancellation= null;
             Result = new();
             Parser parser = new();
 
@@ -81,41 +82,65 @@ namespace Spongbob.ViewModels
                 var res = SideBar.Result;
                 if (Result.Map == null) return;
                 SideBar.IsRunning = false;
-                for (int i = 0; i < Result.Map.Height; i++)
-                {
-                    for (int j = 0; j < Result.Map.Width; j++)
-                    {
-                        var tile = Result.GetTile(i, j);
-                        tile.State = TileState.BLANK;
-
-                        var start = Result.Map!.StartPos;
-
-                        if (start != null && start.Item1 == j && start.Item2 == i)
-                        {
-                            tile.State = TileState.CURRENT;
-                        }
-                    }
-                }
+                resetMap();
                 SideBar.Result = null;
             });
 
             this.WhenAnyValue(x => x.SideBar.FilePath)
                 .Subscribe( file =>
                 {
-                    Debug.WriteLine("test");
+                    Result.Map = null;
                     if (file != null)
                     {
-                        Result.Map = null;
                         try
                         {
                             Result.Map = parser.ParseFile(file);
-                            Debug.WriteLine("Success");
                         } catch (Exception ex)
                         {
                             SideBar.Error = ex.Message;
                         }
                     }
                 });
+
+            SideBar.RerunResult = ReactiveCommand.Create(RerunResult, this.WhenAnyValue(x => x.SideBar.CanRerun));
+        }
+
+        public void RerunResult()
+        {
+            if (Result.Map == null || SideBar.Result == null || !SideBar.Result.Found) return;
+            cancellation?.Cancel();
+            resetMap();
+            cancellation = new();
+            Algorithm.RerunResult(Result.Map, SideBar.Result, (Graph prev, Graph now) =>
+            {
+                Result.GetTile(now.Pos.Item2, now.Pos.Item1).State = TileState.CURRENT;
+
+                if (prev != now)
+                {
+                    Result.GetTile(prev.Pos.Item2, prev.Pos.Item1).State = TileState.VISITED;
+                }
+            }, SideBar.GetCurrentDelay, cancellation);
+            
+        }
+
+        void resetMap()
+        {
+            if (Result.Map == null) return;
+            for (int i = 0; i < Result.Map.Height; i++)
+            {
+                for (int j = 0; j < Result.Map.Width; j++)
+                {
+                    var tile = Result.GetTile(i, j);
+                    tile.State = TileState.BLANK;
+
+                    var start = Result.Map!.StartPos;
+
+                    if (start != null && start.Item1 == j && start.Item2 == i)
+                    {
+                        tile.State = TileState.CURRENT;
+                    }
+                }
+            }
         }
     }
 }

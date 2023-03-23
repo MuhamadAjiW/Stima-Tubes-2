@@ -19,7 +19,8 @@ namespace Spongbob.Models
         protected bool isTSPDone = false;
         protected List<Tuple<int, int>> nonTSPRoute = new();
 
-        public delegate void Callback(Tuple<string, Graph, Graph, bool> step);
+        public delegate void StepCallback(Tuple<string, Graph, Graph, bool> step);
+        public delegate void RerunResultCallback(Graph prev, Graph now);
 
         public bool IsDone { get => isTSP ? isTSPDone : isTreasureDone; }
         public bool IsBack { get => isTSP && !isTSPDone && isTreasureDone; }
@@ -92,7 +93,32 @@ namespace Spongbob.Models
 
         public abstract Tuple<string, Graph, Graph, bool> RunAndVisualize(string previous, Graph previousTile);
 
-        public abstract Task RunProper(Callback callback, Func<int> getDelay, CancellationTokenSource cancellation);
+        public abstract Task RunProper(StepCallback callback, Func<int> getDelay, CancellationTokenSource cancellation);
+
+        public static async void RerunResult(Map map, Result res, RerunResultCallback callback, Func<int> getDelay, CancellationTokenSource cancellation)
+        {
+            if (!res.Found) return;
+            Graph prev = map.Start;
+            Graph now = map.Start;
+            callback(prev, now);
+            await Task.Delay(getDelay(), cancellation.Token);
+
+            foreach (var x in res.Route)
+            {
+                if (cancellation.IsCancellationRequested) return;
+                prev = now;
+                now = x switch
+                {
+                    'U' => now.GetNeighbor(Location.Top)!,
+                    'R' => now.GetNeighbor(Location.Right)!,
+                    'D' => now.GetNeighbor(Location.Bottom)!,
+                    _ => now.GetNeighbor(Location.Left)!,
+                };
+                callback(prev, now);
+                await Task.Delay(getDelay(), cancellation.Token);
+            }
+
+        }
 
         public Graph getGraphStep(char idChar, Graph tile, bool reversed)
         {

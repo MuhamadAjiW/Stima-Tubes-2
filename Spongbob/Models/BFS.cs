@@ -380,7 +380,7 @@ namespace Spongbob.Models
             return new Tuple<string, Graph, Graph, bool>(id, tile, previousTile, false);
         }
 
-        public override async Task RunProper(Callback callback, Func<int> getDelay,
+        public override async Task RunProper(StepCallback callback, Func<int> getDelay,
             CancellationTokenSource cancellation)
         {
             bool success = true;
@@ -420,7 +420,7 @@ namespace Spongbob.Models
                     res.NodesCount++;
 
                 callback(step);
-                await Task.Delay(getDelay());
+                await Task.Delay(getDelay(), cancellation.Token);
             }
             watch.Stop();
             res.Time = watch.ElapsedMilliseconds;

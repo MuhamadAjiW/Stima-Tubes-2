@@ -27,6 +27,14 @@ namespace Spongbob.ViewModels
             set => this.RaiseAndSetIfChanged(ref isRunning, value);
         }
 
+        private bool isRerun = false;
+
+        public bool IsRerun
+        {
+            get => isRerun;
+            set => this.RaiseAndSetIfChanged(ref isRerun, value);
+        }
+
         private int speed;
 
         public int Speed
@@ -40,7 +48,11 @@ namespace Spongbob.ViewModels
         public Result? Result
         {
             get => result;
-            set => this.RaiseAndSetIfChanged(ref result, value);
+            set 
+            { 
+                this.RaiseAndSetIfChanged(ref result, value);
+                this.RaisePropertyChanged(nameof(CanRerun));
+            }
         }
 
         public string? Route { get; set; }
@@ -102,6 +114,8 @@ namespace Spongbob.ViewModels
                 Result = null;
             });
 
+            RerunResult = ReactiveCommand.Create(() => { }, 
+                this.WhenAnyValue(x => x.CanRerun));
 
         }
 
@@ -131,9 +145,17 @@ namespace Spongbob.ViewModels
         public ReactiveCommand<Unit, Task> Visualize { get; set; }
 
         public ReactiveCommand<Unit, Unit> Search { get; set; }
+
+        public ReactiveCommand<Unit, Unit> RerunResult { get; set; }
+
         public bool CanSearch
         {
             get => !string.IsNullOrEmpty(filePath) && string.IsNullOrEmpty(Error);
+        }
+
+        public bool CanRerun
+        {
+            get => Result != null && Result.Found;
         }
 
         public ReactiveCommand<Unit, Unit> Reset { get; set; }
