@@ -1,8 +1,8 @@
 # Maze Solver With BFS and DFS Algorithm
 ## Table of Contents
 * [General Info](#general-information)
-* [Features](#features)
-* [Screenshots](#screenshots)
+* [Structure](#structure)
+* [Dependencies](#dependencies)
 * [Setup](#installation)
 * [Usage](#program-execution)
 * [Acknowledgements](#acknowledgements)
