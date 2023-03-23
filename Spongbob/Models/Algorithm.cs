@@ -100,7 +100,7 @@ namespace Spongbob.Models
             Graph prev = map.Start;
             Graph now = map.Start;
             callback(prev, now);
-            await Task.Delay(getDelay(), cancellation.Token);
+            await Task.Delay(getDelay());
 
             foreach (var x in res.Route)
             {
@@ -114,7 +114,7 @@ namespace Spongbob.Models
                     _ => now.GetNeighbor(Location.Left)!,
                 };
                 callback(prev, now);
-                await Task.Delay(getDelay(), cancellation.Token);
+                await Task.Delay(getDelay());
             }
 
         }
