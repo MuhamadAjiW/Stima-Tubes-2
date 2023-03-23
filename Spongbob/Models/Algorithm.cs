@@ -14,7 +14,6 @@ namespace Spongbob.Models
         protected bool started = false;
         protected bool isTSP;
         protected int treasureCounts = 0;
-        protected Graph? lastTreasure;
         protected bool isTreasureDone = false;
         protected bool isTSPDone = false;
         protected List<Tuple<int, int>> nonTSPRoute = new();
