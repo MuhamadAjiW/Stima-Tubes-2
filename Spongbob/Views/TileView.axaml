@@ -39,6 +39,8 @@
 		   Classes.backtracked="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.BACKTRACKED}}"
 		   Classes.current="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
 		   >
+		<Image IsVisible="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.START}}"
+			   Source="avares://Spongbob/Assets/Krusty.png"/>
 		<Image IsVisible="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"
 			   Source="avares://Spongbob/Assets/Treasure.png"/>
 		<Image IsVisible="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
