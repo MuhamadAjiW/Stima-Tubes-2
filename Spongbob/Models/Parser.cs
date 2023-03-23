@@ -48,7 +48,7 @@ namespace Spongbob.Models
                             map.SetTile(y, x, false, false);
                             break;
                         case "T":
-                            map.SetTile(y, x, true, false); 
+                            map.SetTile(y, x, true, false);
                             break;
                         case "X":
                             continue;
@@ -61,7 +61,7 @@ namespace Spongbob.Models
             if (map.TreasuresCount == 0)
             {
                 throw new Exception("There is no treasure on the map");
-            } 
+            }
 
             return map;
         }

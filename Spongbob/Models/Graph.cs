@@ -7,6 +7,18 @@ using System.Threading.Tasks;
 
 namespace Spongbob.Models
 {
+    public enum TileState
+    {
+        NotFound,
+        Visited,
+    }
+
+    public enum TileView
+    {
+        NotVisited,
+        Visited,
+        BackTracked
+    }
     public enum Location
     {
         Top = 0,
@@ -14,15 +26,15 @@ namespace Spongbob.Models
         Bottom = 2,
         Left = 3,
     }
-    public class Graph 
+    public class Graph
     {
         static int count = 0;
         public int Id;
-        private bool isTreasure = false;
+        private readonly bool isTreasure = false;
         public Tuple<int, int> Pos;
         public TileView TileView { get; set; } = TileView.NotVisited;
-        public TileState states { get; set; } = TileState.NotFound;
-        public TileState backStates { get; set; } = TileState.NotFound;
+        public TileState States { get; set; } = TileState.NotFound;
+        public TileState BackStates { get; set; } = TileState.NotFound;
         private readonly Graph?[] neighbors =
         {
             null,
@@ -40,15 +52,6 @@ namespace Spongbob.Models
             Id = count;
             count++;
             Pos = new Tuple<int, int>(x, y);
-        }
-
-        public Graph(Graph? top, Graph? right, Graph? bottom, Graph? left, bool isTreasure = false)
-        {
-            neighbors[0] = top;
-            neighbors[1] = right;
-            neighbors[2] = bottom;
-            neighbors[3] = left;
-            this.isTreasure = isTreasure;
         }
 
         public Graph? GetNeighbor(Location loc)

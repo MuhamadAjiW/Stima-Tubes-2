@@ -15,7 +15,8 @@ namespace Spongbob.ViewModels
             if (value is TileType t1 && parameter is TileType t2)
             {
                 return t1 == t2;
-            } else if (value is TileState t3 && parameter is TileState t4)
+            }
+            else if (value is TileState t3 && parameter is TileState t4)
             {
                 return t3 == t4;
             }

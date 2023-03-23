@@ -32,13 +32,13 @@
 		</Style>
 	</UserControl.Styles>
 	<Panel
-		   Classes.void="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.VOID}}"
-		Classes.treasure="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"
-		Classes.start="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.START}}"
-		Classes.visited="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.VISITED}}"
-		   Classes.backtracked="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.BACKTRACKED}}"
-		   Classes.current="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
-		   >
+			Classes.void="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.VOID}}"
+			Classes.treasure="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"
+			Classes.start="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.START}}"
+			Classes.visited="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.VISITED}}"
+			Classes.backtracked="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.BACKTRACKED}}"
+			Classes.current="{Binding State, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileState.CURRENT}}"
+			>
 		<Image IsVisible="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.START}}"
 			   Source="avares://Spongbob/Assets/Krusty.png"/>
 		<Image IsVisible="{Binding Type, Converter={StaticResource enumConverter}, ConverterParameter={x:Static local:TileType.TREASURE}}"

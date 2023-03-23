@@ -36,22 +36,22 @@ namespace Spongbob.Models
             tiles[i, j] = tile;
             if (isStart)
                 StartPos = new Tuple<int, int>(j, i);
-            if (CheckValid(i-1, j))
+            if (CheckValid(i - 1, j))
             {
-                tiles[i-1, j]!.SetNeighbor(Location.Bottom, tile);
+                tiles[i - 1, j]!.SetNeighbor(Location.Bottom, tile);
                 tile.SetNeighbor(Location.Top, tiles[i - 1, j]!);
             }
-            if (CheckValid(i+1, j))
+            if (CheckValid(i + 1, j))
             {
                 tiles[i + 1, j]!.SetNeighbor(Location.Top, tile);
                 tile.SetNeighbor(Location.Bottom, tiles[i + 1, j]!);
             }
-            if (CheckValid(i, j-1))
+            if (CheckValid(i, j - 1))
             {
                 tiles[i, j - 1]!.SetNeighbor(Location.Right, tile);
                 tile.SetNeighbor(Location.Left, tiles[i, j - 1]!);
             }
-            if (CheckValid(i, j+1))
+            if (CheckValid(i, j + 1))
             {
                 tiles[i, j + 1]!.SetNeighbor(Location.Left, tile);
                 tile.SetNeighbor(Location.Right, tiles[i, j + 1]!);
@@ -65,26 +65,26 @@ namespace Spongbob.Models
             {
                 if (tile != null)
                 {
-                    tile!.states = TileState.NotFound;
-                    tile!.backStates = TileState.NotFound;
+                    tile!.States = TileState.NotFound;
+                    tile!.BackStates = TileState.NotFound;
                 }
             }
 
         }
 
         private bool CheckValid(int i, int j)
-        {  
+        {
 
-                return i >= 0 && i < Height && j >= 0 && j < Width && tiles[i, j] != null;
+            return i >= 0 && i < Height && j >= 0 && j < Width && tiles[i, j] != null;
         }
 
-        
+
 
         public void Print()
         {
             for (int i = 0; i < Height; i++)
             {
-                for(int j = 0;  j < Width; j++)
+                for (int j = 0; j < Width; j++)
                 {
                     Graph? tile = tiles[i, j];
                     if (i == StartPos.Item2 && j == StartPos.Item1)
@@ -99,7 +99,8 @@ namespace Spongbob.Models
                     else if (tile.IsTreasure)
                     {
                         Debug.Write("T");
-                    } else
+                    }
+                    else
                     {
                         Debug.Write("R");
                     }

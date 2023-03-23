@@ -17,13 +17,16 @@ namespace Spongbob.ViewModels
         public string Button1Title { get; }
 
         private int _selected = 1;
-        public int Selected { 
+        public int Selected
+        {
             get => _selected;
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref _selected, value);
                 this.RaisePropertyChanged(nameof(Button2Active));
                 this.RaisePropertyChanged(nameof(Button1Active));
-            } }
+            }
+        }
 
         public bool Button1Active
         {
@@ -45,10 +48,11 @@ namespace Spongbob.ViewModels
             Select = ReactiveCommand.Create<string>((value) =>
             {
                 Debug.WriteLine(value);
-               if (value == "1")
+                if (value == "1")
                 {
                     Selected = 1;
-                } else
+                }
+                else
                 {
                     Selected = 2;
                 }
