@@ -17,6 +17,7 @@ namespace Spongbob.Models
         {
             graphsprio1.Clear();
             graphsprio2.Clear();
+            stucks.Clear();
             started = true;
             treasureCounts = 0;
             nonTSPRoute.Clear();
