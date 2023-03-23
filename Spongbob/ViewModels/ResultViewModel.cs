@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Spongbob.ViewModels
 {
-    public class ResultViewModel: ViewModelBase
+    public class ResultViewModel : ViewModelBase
     {
         public Grid? Container { get; set; }
         private bool isSearch = false;
@@ -32,7 +32,8 @@ namespace Spongbob.ViewModels
         public List<TileViewModel> Tiles { get; } = new();
 
 
-        public ResultViewModel() {
+        public ResultViewModel()
+        {
             this.WhenPropertyChanged(x => x.Map).Subscribe(RenderMap);
         }
 
@@ -91,10 +92,12 @@ namespace Spongbob.ViewModels
                         if (el == Map.Start)
                         {
                             type = TileType.START;
-                        } else if (el.IsTreasure)
+                        }
+                        else if (el.IsTreasure)
                         {
                             type = TileType.TREASURE;
-                        } else
+                        }
+                        else
                         {
                             type = TileType.BLANK;
                         }
@@ -109,7 +112,7 @@ namespace Spongbob.ViewModels
                     Grid.SetRow(tileView, i);
                     Grid.SetColumn(tileView, j);
                     Container.Children.Add(tileView);
-                    
+
                 }
             }
 
@@ -129,7 +132,8 @@ namespace Spongbob.ViewModels
             if (bfs)
             {
                 algorithm = new BFS(Map!, tsp);
-            } else
+            }
+            else
             {
                 algorithm = new DFS(Map!, tsp);
             }
@@ -137,7 +141,7 @@ namespace Spongbob.ViewModels
             return algorithm.JustRun();
         }
 
-        public async Task RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
+        public void RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             IsSearch = false;
             Algorithm algorithm;
@@ -151,7 +155,7 @@ namespace Spongbob.ViewModels
                 algorithm = new DFS(Map!, tsp);
             }
 
-            await algorithm.RunProper((step) =>
+            algorithm.RunAndVisualize((step) =>
             {
                 Graph now = step.Item2;
                 Graph before = step.Item3;

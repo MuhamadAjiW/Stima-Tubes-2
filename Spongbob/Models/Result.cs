@@ -16,7 +16,8 @@ namespace Spongbob.Models
 
         public bool Found { get; set; } = true;
 
-        public Result(int width, int height) {
+        public Result(int width, int height)
+        {
             Tiles = new int[height, width];
         }
     }

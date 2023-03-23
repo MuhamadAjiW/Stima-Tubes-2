@@ -22,14 +22,15 @@ namespace Spongbob.ViewModels
         VISITED,
         BACKTRACKED,
     }
-    public class TileViewModel: ViewModelBase
+    public class TileViewModel : ViewModelBase
     {
         public int Row { get; }
         public int Col { get; }
 
 
         private TileType type;
-        public TileType Type { 
+        public TileType Type
+        {
             get => type;
             set => this.RaiseAndSetIfChanged(ref type, value);
         }
@@ -50,7 +51,7 @@ namespace Spongbob.ViewModels
                 State = TileState.CURRENT;
             else
                 State = TileState.BLANK;
-            
+
         }
 
         public void Click()

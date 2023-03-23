@@ -5,7 +5,34 @@
 
 - [Maze Solver With BFS and DFS Algorithm](#maze-solver-with-bfs-and-dfs-algorithm)
 - [Table of Contents](#table-of-contents)
+- [Requirements](#requirements)
+- [How to Run](#how-to-run)
 - [Author](#author)
+
+# Requirements
+- .NET Framework 6.0
+- C#
+- Avalonia UI
+
+# How to Run
+- Clone this repository
+- in terminal run ```cd Spongbob```
+- run ```dotnet run```
+- enjoy the program
+
+# Path Priority
+- UP
+- RIGHT
+- DOWN
+- LEFT
+
+# Color Meaning
+- Purple : Wall
+- White : Path
+- Yellow : Treasure
+- Pink : Current Position
+- Dark Purple : Backtracked Path
+
 
 # Author
 | Name | NIM |

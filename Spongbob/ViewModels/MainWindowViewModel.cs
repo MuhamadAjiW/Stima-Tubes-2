@@ -5,6 +5,7 @@ using ReactiveUI;
 using Spongbob.Models;
 using Avalonia.Controls;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Spongbob.ViewModels
 {
@@ -21,73 +22,21 @@ namespace Spongbob.ViewModels
             Result = new();
             Parser parser = new();
 
-            SideBar.Search = ReactiveCommand.Create(() =>
+            SideBar.Search = ReactiveCommand.Create(Search,
+                this.WhenAnyValue(x => x.SideBar.CanSearch));
+
+            SideBar.Visualize = ReactiveCommand.Create(() =>
             {
-                Result.Found = true;
-                Result res = Result.RunSearch(
-                    SideBar.Algorithm.Button1Active,
-                    SideBar.TSP.Button1Active
-                    );
-                Result.Found = res.Found;
-                SideBar.Result = res;
-                SideBar.IsRunning = true;
-
-                if (!res.Found) return;
-
-                for (int i = 0; i < res.Tiles.GetLength(0); i++)
-                {
-                    for (int j = 0; j < res.Tiles.GetLength(1); j++)
-                    {
-                        var tile = Result.Tiles[i * res.Tiles.GetLength(1) + j];
-                        if (res.Tiles[i, j] == 0)
-                        {
-                            tile.State = TileState.BLANK;
-                        } else
-                        {
-                            tile.State = TileState.VISITED;
-                        }
-                    }
-                }
-            }, this.WhenAnyValue(x => x.SideBar.CanSearch));
-
-            SideBar.Visualize = ReactiveCommand.Create(async () =>
-            {
-                cancellation = new CancellationTokenSource();
-                SideBar.IsRunning = true;
-                await Result.RunVisualize(
-                    SideBar.Algorithm.Button1Active,
-                    SideBar.TSP.Button1Active, 
-                    SideBar.GetCurrentDelay,
-                    cancellation);
-
-                if (cancellation.IsCancellationRequested) return;
-                Result res = Result.RunSearch(
-                    SideBar.Algorithm.Button1Active,
-                    SideBar.TSP.Button1Active
-                    );
-
-                SideBar.Result = res;
-                Result.Found = true;
+                Visualize();
+                return Task.CompletedTask;
             }, this.WhenAnyValue(x => x.SideBar.CanSearch));
 
             SideBar.RaisePropertyChanged(nameof(SideBar.Search));
 
-            SideBar.Reset = ReactiveCommand.Create(() =>
-            {
-                Result.Found = true;
-                if (cancellation != null)
-                {
-                    cancellation.Cancel();
-                }
-                var res = SideBar.Result;
-                if (Result.Map == null) return;
-                SideBar.IsRunning = false;
-                resetMap();
-                SideBar.Result = null;
-            });
+            SideBar.Reset = ReactiveCommand.Create(Reset);
 
             this.WhenAnyValue(x => x.SideBar.FilePath)
-                .Subscribe( file =>
+                .Subscribe(file =>
                 {
                     Result.Map = null;
                     if (file != null)
@@ -95,7 +44,8 @@ namespace Spongbob.ViewModels
                         try
                         {
                             Result.Map = parser.ParseFile(file);
-                        } catch (Exception ex)
+                        }
+                        catch (Exception ex)
                         {
                             SideBar.Error = ex.Message;
                         }
@@ -109,7 +59,7 @@ namespace Spongbob.ViewModels
         {
             if (Result.Map == null || SideBar.Result == null || !SideBar.Result.Found) return;
             cancellation?.Cancel();
-            resetMap();
+            ResetMap();
             cancellation = new();
             Algorithm.RerunResult(Result.Map, SideBar.Result, (Graph prev, Graph now) =>
             {
@@ -120,10 +70,10 @@ namespace Spongbob.ViewModels
                     Result.GetTile(prev.Pos.Item2, prev.Pos.Item1).State = TileState.VISITED;
                 }
             }, SideBar.GetCurrentDelay, cancellation);
-            
+
         }
 
-        void resetMap()
+        void ResetMap()
         {
             if (Result.Map == null) return;
             for (int i = 0; i < Result.Map.Height; i++)
@@ -141,6 +91,70 @@ namespace Spongbob.ViewModels
                     }
                 }
             }
+        }
+
+        void Search()
+        {
+            Result.Found = true;
+            Result res = Result.RunSearch(
+                SideBar.Algorithm.Button1Active,
+                SideBar.TSP.Button1Active
+                );
+            Result.Found = res.Found;
+            SideBar.Result = res;
+            SideBar.IsRunning = true;
+
+            if (!res.Found) return;
+
+            for (int i = 0; i < res.Tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < res.Tiles.GetLength(1); j++)
+                {
+                    var tile = Result.Tiles[i * res.Tiles.GetLength(1) + j];
+                    if (res.Tiles[i, j] == 0)
+                    {
+                        tile.State = TileState.BLANK;
+                    }
+                    else
+                    {
+                        tile.State = TileState.VISITED;
+                    }
+                }
+            }
+        }
+
+        void Visualize()
+        {
+            cancellation = new CancellationTokenSource();
+            SideBar.IsRunning = true;
+            Result.RunVisualize(
+                SideBar.Algorithm.Button1Active,
+                SideBar.TSP.Button1Active,
+                SideBar.GetCurrentDelay,
+                cancellation);
+
+            if (cancellation.IsCancellationRequested) return;
+            Result res = Result.RunSearch(
+                SideBar.Algorithm.Button1Active,
+                SideBar.TSP.Button1Active
+                );
+
+            SideBar.Result = res;
+            Result.Found = true;
+        }
+
+        void Reset()
+        {
+            Result.Found = true;
+            if (cancellation != null)
+            {
+                cancellation.Cancel();
+            }
+            var res = SideBar.Result;
+            if (Result.Map == null) return;
+            SideBar.IsRunning = false;
+            ResetMap();
+            SideBar.Result = null;
         }
     }
 }

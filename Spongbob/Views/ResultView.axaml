@@ -8,7 +8,7 @@
 			Background="{StaticResource Secondary}"
 			Margin="20 0 0 0">
 		<Grid Margin="20" ColumnDefinitions="*" RowDefinitions="Auto,*">
-			<TextBlock 
+			<TextBlock
 				Grid.Row="0"
 				Text="OUTPUT"
 						   FontSize="24"
@@ -26,16 +26,16 @@
 					</MultiBinding>
 				</Grid.IsVisible>
 			</Grid>
-				<TextBlock Text="Gaada Bang" FontSize="70" Foreground="White"
-						   Grid.Row="1"
-						   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
-					<TextBlock.IsVisible>
-						<MultiBinding Converter="{x:Static BoolConverters.And}">
-							<Binding Path="!Found" />
-							<Binding Path="IsSearch"/>
-						</MultiBinding>
-					</TextBlock.IsVisible>
-				</TextBlock>
+			<TextBlock Text="Gaada Bang" FontSize="70" Foreground="White"
+					   Grid.Row="1"
+					   FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<TextBlock.IsVisible>
+					<MultiBinding Converter="{x:Static BoolConverters.And}">
+						<Binding Path="!Found" />
+						<Binding Path="IsSearch"/>
+					</MultiBinding>
+				</TextBlock.IsVisible>
+			</TextBlock>
 		</Grid>
 	</Border>
 </UserControl>

@@ -14,17 +14,17 @@
 	<Window.Background>
 		<ImageBrush Source="/Assets/bg.png" Stretch="UniformToFill"/>
 	</Window.Background>
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
 
-	<SplitView IsPaneOpen="True" 
-			   DisplayMode="Inline" 
-			   Margin="20" 
-			   Background="Transparent" 
-			   PaneBackground="Transparent" 
+	<SplitView IsPaneOpen="True"
+			   DisplayMode="Inline"
+			   Margin="20"
+			   Background="Transparent"
+			   PaneBackground="Transparent"
 			   Pane="{Binding SideBar}" Content="{Binding Result}">
 	</SplitView>
 </Window>

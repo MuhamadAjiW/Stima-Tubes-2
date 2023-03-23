@@ -1,18 +1,10 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Metadata;
-using Avalonia.Threading;
-using DynamicData.Binding;
+﻿using DynamicData.Binding;
 using ReactiveUI;
 using Spongbob.Models;
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Spongbob.ViewModels
@@ -48,8 +40,8 @@ namespace Spongbob.ViewModels
         public Result? Result
         {
             get => result;
-            set 
-            { 
+            set
+            {
                 this.RaiseAndSetIfChanged(ref result, value);
                 this.RaisePropertyChanged(nameof(CanRerun));
             }
@@ -71,7 +63,8 @@ namespace Spongbob.ViewModels
 
 
         private string? filePath;
-        public string? FilePath { 
+        public string? FilePath
+        {
             get => filePath;
             set
             {
@@ -81,7 +74,8 @@ namespace Spongbob.ViewModels
                 this.RaisePropertyChanged(nameof(CanSearch));
             }
         }
-        public SidebarViewModel() {
+        public SidebarViewModel()
+        {
             ShowFileDialog = new();
             TSP = new("TSP", "yes", "no");
             Algorithm = new("Algorithm", "BFS", "DFS");
@@ -98,10 +92,11 @@ namespace Spongbob.ViewModels
 
             this.WhenValueChanged(x => x.Result).Subscribe(r =>
             {
-               if (r != null)
+                if (r != null)
                 {
                     Route = string.Join("-", r.Route);
-                } else
+                }
+                else
                 {
                     Route = null;
                 }
@@ -114,7 +109,7 @@ namespace Spongbob.ViewModels
                 Result = null;
             });
 
-            RerunResult = ReactiveCommand.Create(() => { }, 
+            RerunResult = ReactiveCommand.Create(() => { },
                 this.WhenAnyValue(x => x.CanRerun));
 
         }
@@ -122,7 +117,8 @@ namespace Spongbob.ViewModels
         public ToggleButtonViewModel TSP { get; }
         public ToggleButtonViewModel Algorithm { get; }
 
-        public string? Filename { 
+        public string? Filename
+        {
             get => string.IsNullOrEmpty(filePath) ? "Click to select" : Path.GetFileName(filePath);
         }
 
@@ -132,7 +128,7 @@ namespace Spongbob.ViewModels
         public async void SelectFile()
         {
             var result = await ShowFileDialog.Handle(new Unit());
-            if  (result != FilePath)
+            if (result != FilePath)
             {
                 Error = null;
             }
