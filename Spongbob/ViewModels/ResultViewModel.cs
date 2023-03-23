@@ -155,7 +155,7 @@ namespace Spongbob.ViewModels
                 algorithm = new DFS(Map!, tsp);
             }
 
-            algorithm.RunAndVisualize((step) =>
+            algorithm.RunProper((step) =>
             {
                 Graph now = step.Item2;
                 Graph before = step.Item3;
