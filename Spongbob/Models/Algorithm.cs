@@ -161,7 +161,7 @@ namespace Spongbob.Models
         /// <param name="callback"></param>
         /// <param name="getDelay"></param>
         /// <param name="cancellation"></param>
-        public async void RunAndVisualize(StepCallback callback, Func<int> getDelay, CancellationTokenSource cancellation)
+        public async Task RunAndVisualize(StepCallback callback, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             string id = "";
 

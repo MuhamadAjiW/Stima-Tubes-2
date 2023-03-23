@@ -123,11 +123,11 @@ namespace Spongbob.ViewModels
             }
         }
 
-        void Visualize()
+        async void Visualize()
         {
             cancellation = new CancellationTokenSource();
             SideBar.IsRunning = true;
-            Result.RunVisualize(
+            await Result.RunVisualize(
                 SideBar.Algorithm.Button1Active,
                 SideBar.TSP.Button1Active,
                 SideBar.GetCurrentDelay,

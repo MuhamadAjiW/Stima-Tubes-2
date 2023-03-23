@@ -141,7 +141,7 @@ namespace Spongbob.ViewModels
             return algorithm.JustRun();
         }
 
-        public void RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
+        public async Task RunVisualize(bool bfs, bool tsp, Func<int> getDelay, CancellationTokenSource cancellation)
         {
             IsSearch = false;
             Algorithm algorithm;
@@ -155,7 +155,7 @@ namespace Spongbob.ViewModels
                 algorithm = new DFS(Map!, tsp);
             }
 
-            algorithm.RunAndVisualize((step) =>
+            await algorithm.RunAndVisualize((step) =>
             {
                 Graph now = step.Item2;
                 Graph before = step.Item3;
